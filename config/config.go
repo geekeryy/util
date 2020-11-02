@@ -16,9 +16,19 @@ type Config struct {
 	Mysql mysql.Config `mapstructure:"mysql"`
 }
 
+func GetConfig() Config {
+	return c
+}
+
 // 加载配置
-func LoadConfig(filename string) Config {
-	viper.SetConfigFile(filename)
+func LoadConfig(cfgFile string) Config {
+	if cfgFile != "" {
+		viper.SetConfigFile(cfgFile)
+	} else {
+		viper.SetConfigName("config")
+		viper.SetConfigType("yaml")
+		viper.AddConfigPath(".")
+	}
 	if err := viper.ReadInConfig();err!=nil{
 		log.Fatal(err)
 	}
