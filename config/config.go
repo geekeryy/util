@@ -11,11 +11,12 @@ import (
 
 var c Config
 
+// 配置结构体
 type Config struct {
 	Mysql mysql.Config `mapstructure:"mysql"`
 }
 
-
+// 加载配置
 func LoadConfig(filename string) Config {
 	viper.SetConfigFile(filename)
 	if err := viper.ReadInConfig();err!=nil{

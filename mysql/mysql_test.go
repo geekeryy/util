@@ -14,6 +14,7 @@ import (
 
 func TestMysql(t *testing.T) {
 	mysql.Init(config.LoadConfig("./../config.yaml").Mysql)
+	mysql.AutoMigrate()
 
 	db := mysql.Conn()
 	defer mysql.Close()
