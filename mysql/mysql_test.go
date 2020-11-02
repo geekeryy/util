@@ -13,7 +13,7 @@ import (
 
 
 func TestMysql(t *testing.T) {
-	mysql.Init(config.LoadConfig("./../config.yaml").Mysql)
+	mysql.Init(config.LoadConfig().Mysql)
 
 
 	db := mysql.Conn()

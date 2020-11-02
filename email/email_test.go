@@ -6,7 +6,7 @@ import (
 )
 
 func init()  {
-	config.LoadConfig("./../config.yaml")
+	config.LoadConfig()
 }
 
 func TestSendMail(t *testing.T) {

@@ -10,5 +10,5 @@ import (
 )
 
 func TestInitConfig(t *testing.T) {
-	log.Println(config.LoadConfig("./../config.yaml"))
+	log.Println(config.LoadConfig())
 }

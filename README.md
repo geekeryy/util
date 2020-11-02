@@ -6,4 +6,5 @@
 - [x] log 日志（可扩展）
 - [x] mongodb mongo（待测试）
 - [x] mysql mysql
+- [x] server 启动http服务
 - [ ] redis
