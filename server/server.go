@@ -34,7 +34,7 @@ func Server(router *gin.Engine, port int) {
 	logrus.Infof("Server started at http://127.0.0.1:%d", port)
 
 	// 等待中断信号以优雅地关闭服务器（设置 5 秒的超时时间）
-	quit := make(chan os.Signal, 1)
+	quit := make(chan os.Signal)
 
 	// kill (no param) default send syscall.SIGTERM
 	// kill -2 is syscall.SIGINT

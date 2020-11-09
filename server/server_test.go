@@ -11,7 +11,7 @@ import (
 	"testing"
 )
 
-func init()  {
+func init() {
 	config.LoadConfig()
 }
 
