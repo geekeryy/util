@@ -4,10 +4,10 @@
 package config
 
 import (
+	"github.com/comeonjy/util/log"
 	"github.com/comeonjy/util/mysql"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
-	"log"
 )
 
 var c Config
@@ -15,6 +15,7 @@ var c Config
 // 配置结构体
 type Config struct {
 	Mysql mysql.Config `mapstructure:"mysql"`
+	Log   log.Config   `mapstructure:"log"`
 }
 
 func GetConfig() Config {
@@ -23,7 +24,7 @@ func GetConfig() Config {
 
 // 加载配置
 func LoadConfig(cfgFile ...string) Config {
-	if len(cfgFile)>0 && cfgFile[0] != "" {
+	if len(cfgFile) > 0 && cfgFile[0] != "" {
 		viper.SetConfigFile(cfgFile[0])
 	} else {
 		viper.SetConfigName("config")
@@ -32,14 +33,14 @@ func LoadConfig(cfgFile ...string) Config {
 		viper.AddConfigPath("./../")
 	}
 	if err := viper.ReadInConfig(); err != nil {
-		log.Fatal(err)
+		logrus.Fatal(err)
 	}
 
 	logrus.Info("use config file:", viper.ConfigFileUsed())
 
 	err := viper.Unmarshal(&c)
 	if err != nil {
-		log.Fatal(err)
+		logrus.Fatal(err)
 	}
 	return c
 }
