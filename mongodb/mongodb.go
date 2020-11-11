@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/sirupsen/logrus"
-	"github.com/spf13/viper"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -19,25 +18,37 @@ var (
 	once     sync.Once
 )
 
-// GetCollection ...
-func GetCollection(collectionName string) *mongo.Collection {
+func GetConn(collectionName string) *mongo.Collection {
 	return database.Collection(collectionName)
 }
 
-// Init ...
-func Init() {
+type Config struct {
+	Username string `json:"username" yaml:"username"`
+	Password string `json:"password" yaml:"password"`
+	Addr     string `json:"addr" yaml:"addr"`
+	Database string `json:"database" yaml:"database"`
+	MaxPool  uint64 `json:"max_pool" yaml:"max_pool"`
+}
+
+func Init(cfg Config) {
 
 	once.Do(func() {
+		format := `mongodb://%s:%s@%s/%s`
 
-		uri := fmt.Sprintf(`mongodb://%s:%s@%s/%s`,
-			viper.GetString("db.mongodb.username"),
-			viper.GetString("db.mongodb.password"),
-			viper.GetString("db.mongodb.addr"),
-			viper.GetString("db.mongodb.database"),
+		if cfg.Username == "" || cfg.Password == "" {
+			format = `mongodb://%s%s%s/%s`
+		}
+
+		uri := fmt.Sprintf(format,
+			cfg.Username,
+			cfg.Password,
+			cfg.Addr,
+			cfg.Database,
 		)
+		opt := options.Client().ApplyURI(uri)
 
 		var err error
-		client, err = mongo.NewClient(options.Client().ApplyURI(uri))
+		client, err = mongo.NewClient(opt)
 		if err != nil {
 			logrus.Fatalf("couldn't connect to mongo: %v", err)
 		}
@@ -49,12 +60,11 @@ func Init() {
 			logrus.Fatalf("mongo client couldn't connect with background context: %v", err)
 		}
 
-		database = client.Database(viper.GetString("db.mongodb.database"))
+		database = client.Database(cfg.Database)
 		logrus.Info("mongo connect successfully")
 	})
 }
 
-//Disconnect method
 func Disconnect() error {
 	if client != nil {
 		if err := client.Disconnect(nil); err != nil {

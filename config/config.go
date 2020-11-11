@@ -5,6 +5,7 @@ package config
 
 import (
 	"github.com/comeonjy/util/log"
+	"github.com/comeonjy/util/mongodb"
 	"github.com/comeonjy/util/mysql"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -14,8 +15,9 @@ var c Config
 
 // 配置结构体
 type Config struct {
-	Mysql mysql.Config `mapstructure:"mysql"`
-	Log   log.Config   `mapstructure:"log"`
+	Mysql   mysql.Config   `mapstructure:"mysql"`
+	Log     log.Config     `mapstructure:"log"`
+	Mongodb mongodb.Config `mapstructure:"mongodb"`
 }
 
 func GetConfig() Config {
