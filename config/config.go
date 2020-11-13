@@ -7,6 +7,7 @@ import (
 	"github.com/comeonjy/util/log"
 	"github.com/comeonjy/util/mongodb"
 	"github.com/comeonjy/util/mysql"
+	"github.com/comeonjy/util/redis"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
@@ -18,6 +19,7 @@ type Config struct {
 	Mysql   mysql.Config   `mapstructure:"mysql"`
 	Log     log.Config     `mapstructure:"log"`
 	Mongodb mongodb.Config `mapstructure:"mongodb"`
+	Redis   redis.Config   `mapstructure:"redis"`
 }
 
 func GetConfig() Config {
