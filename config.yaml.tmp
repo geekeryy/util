@@ -1,0 +1,39 @@
+# 默认配置文件
+
+# http服务模式(debug,release,test)
+mode: debug
+
+# http 端口
+http_port: 8080
+
+# 日志配置
+log:
+  format: json
+
+# 数据库配置
+mysql:
+  user: root
+  password: 123456
+  host: 127.0.0.1
+  port: 3306
+  dbname: demo
+  max_idle_conn: 10
+  max_open_conn: 100
+  debug: true
+mongodb:
+  addr: 127.0.0.1:27017
+  database: demo
+  username:
+  password:
+redis:
+  addr: 127.0.0.1:6379
+  password:
+  db: 0
+  pool_size: 100
+
+# 邮件配置
+email:
+  user:
+  pass:
+  host: smtp.qq.com
+  port: 465

@@ -1,83 +1,97 @@
 package jwt
 
 import (
+	"encoding/json"
 	"github.com/pkg/errors"
+	"time"
 
 	jwtgo "github.com/dgrijalva/jwt-go"
 )
 
-// JWT struct.
-type JWT struct {
-	SigningKey []byte
-}
+const DefaultExpireDuration = time.Hour * 24 * 30
 
 var (
-	// ErrTokenExpired .
-	ErrTokenExpired = errors.New("Token is expired")
-	// ErrTokenNotValidYet .
+	ErrTokenExpired     = errors.New("Token is expired")
 	ErrTokenNotValidYet = errors.New("Token not active yet")
-	// ErrTokenMalformed .
-	ErrTokenMalformed = errors.New("That's not even a token")
-	// ErrTokenInvalid .
-	ErrTokenInvalid = errors.New("Couldn't handle this token")
-	// SignKey .
-	SignKey = "class100"
+	ErrTokenMalformed   = errors.New("That's not even a token")
+	ErrTokenInvalid     = errors.New("Couldn't handle this token")
+	SignKey             = []byte("243223ffslsfsldfl412fdsfsdf")
 )
 
-// Customclaims struct.
-type Customclaims struct {
-	UID       uint  `json:"uid"`
-	Role      uint8 `json:"role"`
-	SchoolID  uint  `json:"school_id"`
-	SubjectID uint  `json:"subject_id"`
+type Business struct {
+	UID       uint          `json:"uid"`
+	Role      uint8         `json:"role"`
+}
+
+type CustomClaims struct {
+	Business interface{}
 	jwtgo.StandardClaims
 }
 
-// SetSignKey method
-func SetSignKey(key string) string {
-	SignKey = key
-	return SignKey
+type TokenResp struct {
+	Token     string `json:"token"`
+	ExpiredAt string `json:"expired_at"`
 }
 
-// GetSignKey method
-func GetSignKey() string {
-	return SignKey
+func Init(key string) {
+	SignKey = []byte(key)
 }
 
-// NewJWT method return a JWT instance
-func NewJWT() *JWT {
-	return &JWT{
-		[]byte(GetSignKey()),
+// 创建Token
+func CreateToken(bus interface{},expires int64) (*TokenResp, error) {
+	expiresAt := time.Now().Add(DefaultExpireDuration).Unix()
+	if expires != 0 {
+		expiresAt = time.Now().Add(time.Duration(expires)).Unix()
 	}
-}
-
-// CreateToken method
-func (j *JWT) CreateToken(claims Customclaims) (string, error) {
+	claims := &CustomClaims{
+		Business: bus,
+		StandardClaims: jwtgo.StandardClaims{
+			ExpiresAt: expiresAt,
+		},
+	}
 	token := jwtgo.NewWithClaims(jwtgo.SigningMethodHS256, claims)
-	return token.SignedString(j.SigningKey)
+	tokenStr, err := token.SignedString(SignKey)
+	if err != nil {
+		return nil, err
+	}
+	return &TokenResp{
+		Token:     tokenStr,
+		ExpiredAt: time.Unix(expiresAt, 0).Format("2006-01-02 15:04:05"),
+	}, nil
 }
 
-// ParseToken method
-func (j *JWT) ParseToken(tokenString string) (*Customclaims, error) {
-	token, err := jwtgo.ParseWithClaims(tokenString, &Customclaims{}, func(token *jwtgo.Token) (interface{}, error) {
-		return j.SigningKey, nil
+// 解析Token
+func ParseToken(tokenString string, bus interface{}) error {
+	token, err := jwtgo.ParseWithClaims(tokenString, &CustomClaims{}, func(token *jwtgo.Token) (interface{}, error) {
+		return SignKey, nil
 	})
+
 	if err != nil {
 		if ve, ok := err.(*jwtgo.ValidationError); ok {
 			if ve.Errors&jwtgo.ValidationErrorMalformed != 0 {
-				return nil, ErrTokenMalformed
+				return ErrTokenMalformed
 			} else if ve.Errors&jwtgo.ValidationErrorExpired != 0 {
-				// Token is expired
-				return nil, ErrTokenExpired
+				return ErrTokenExpired
 			} else if ve.Errors&jwtgo.ValidationErrorNotValidYet != 0 {
-				return nil, ErrTokenNotValidYet
+				return ErrTokenNotValidYet
 			} else {
-				return nil, ErrTokenInvalid
+				return ErrTokenInvalid
 			}
 		}
 	}
-	if claims, ok := token.Claims.(*Customclaims); ok && token.Valid {
-		return claims, nil
+
+	if token != nil {
+		if claims, ok := token.Claims.(*CustomClaims); ok && token.Valid {
+			marshal, err := json.Marshal(claims.Business)
+			if err != nil {
+				return err
+			}
+			if err := json.Unmarshal(marshal, bus); err != nil {
+				return err
+			}
+			return nil
+		}
 	}
-	return nil, ErrTokenInvalid
+
+	return ErrTokenInvalid
 }

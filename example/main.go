@@ -5,6 +5,7 @@ package main
 
 import (
 	"github.com/comeonjy/util/config"
+	"github.com/comeonjy/util/ctx"
 	"github.com/comeonjy/util/server"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -25,6 +26,13 @@ func main()  {
 		logrus.Info("sleep...end")
 		ctx.JSON(http.StatusOK, gin.H{"msg": "ok"})
 	})
+
+	r.GET("/ping", ctx.Handle(handle))
+
 	server.Server(r, viper.GetInt("http_port"))
 
+}
+
+func handle(ctx *ctx.Context)  {
+	ctx.Success(nil)
 }

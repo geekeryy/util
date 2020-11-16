@@ -2,9 +2,11 @@
 
 - [x] config 配置
 - [x] email 邮件
-- [x] jwt 鉴权（待测试）
+- [x] jwt 鉴权
 - [x] log 日志（可扩展）
-- [x] mongodb mongo（待测试）
+- [x] mongodb mongo
 - [x] mysql mysql
 - [x] server 启动http服务
-- [ ] redis
+- [x] redis redis
+- [x] ctx 自定义上下文
+- [ ] middlewares 中间件

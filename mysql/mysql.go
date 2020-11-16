@@ -11,7 +11,6 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"github.com/sirupsen/logrus"
-	"github.com/spf13/viper"
 )
 
 var (
@@ -50,10 +49,10 @@ func Init(mysqlConfig Config) {
 			logrus.Fatalf("mysql connect failed: %v", err)
 		}
 
-		conn.DB().SetMaxIdleConns(viper.GetInt("db.mysql.max_idle_conn"))
-		conn.DB().SetMaxOpenConns(viper.GetInt("db.mysql.max_open_conn"))
+		conn.DB().SetMaxIdleConns(mysqlConfig.MaxIdleConn)
+		conn.DB().SetMaxOpenConns(mysqlConfig.MaxOpenConn)
 
-		conn.LogMode(viper.GetBool("db.mysql.debug"))
+		conn.LogMode(mysqlConfig.Debug)
 
 		if err = conn.DB().Ping(); err != nil {
 			logrus.Fatalf("database heartbeat failed: %v", err)
