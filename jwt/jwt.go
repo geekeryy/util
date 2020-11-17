@@ -1,7 +1,9 @@
+// @Description  jwt
+// @Author  	 jiangyang
+// @Created  	 2020/11/17 4:12 下午
 package jwt
 
 import (
-	"encoding/json"
 	"github.com/pkg/errors"
 	"time"
 
@@ -19,8 +21,8 @@ var (
 )
 
 type Business struct {
-	UID       uint          `json:"uid"`
-	Role      uint8         `json:"role"`
+	UID  uint  `json:"uid"`
+	Role uint8 `json:"role"`
 }
 
 type CustomClaims struct {
@@ -38,10 +40,10 @@ func Init(key string) {
 }
 
 // 创建Token
-func CreateToken(bus interface{},expires int64) (*TokenResp, error) {
+func CreateToken(bus interface{}, expires time.Duration) (*TokenResp, error) {
 	expiresAt := time.Now().Add(DefaultExpireDuration).Unix()
 	if expires != 0 {
-		expiresAt = time.Now().Add(time.Duration(expires)).Unix()
+		expiresAt = time.Now().Add(expires).Unix()
 	}
 	claims := &CustomClaims{
 		Business: bus,
@@ -61,37 +63,29 @@ func CreateToken(bus interface{},expires int64) (*TokenResp, error) {
 }
 
 // 解析Token
-func ParseToken(tokenString string, bus interface{}) error {
-	token, err := jwtgo.ParseWithClaims(tokenString, &CustomClaims{}, func(token *jwtgo.Token) (interface{}, error) {
+func ParseToken(tokenString string) (interface{}, error) {
+	customClaims := CustomClaims{}
+	token, err := jwtgo.ParseWithClaims(tokenString, &customClaims, func(token *jwtgo.Token) (interface{}, error) {
 		return SignKey, nil
 	})
 
 	if err != nil {
 		if ve, ok := err.(*jwtgo.ValidationError); ok {
 			if ve.Errors&jwtgo.ValidationErrorMalformed != 0 {
-				return ErrTokenMalformed
+				return nil, ErrTokenMalformed
 			} else if ve.Errors&jwtgo.ValidationErrorExpired != 0 {
-				return ErrTokenExpired
+				return nil, ErrTokenExpired
 			} else if ve.Errors&jwtgo.ValidationErrorNotValidYet != 0 {
-				return ErrTokenNotValidYet
+				return nil, ErrTokenNotValidYet
 			} else {
-				return ErrTokenInvalid
+				return nil, ErrTokenInvalid
 			}
 		}
 	}
 
-	if token != nil {
-		if claims, ok := token.Claims.(*CustomClaims); ok && token.Valid {
-			marshal, err := json.Marshal(claims.Business)
-			if err != nil {
-				return err
-			}
-			if err := json.Unmarshal(marshal, bus); err != nil {
-				return err
-			}
-			return nil
-		}
+	if token == nil || !token.Valid {
+		return nil, ErrTokenInvalid
 	}
+	return customClaims.Business, nil
 
-	return ErrTokenInvalid
 }

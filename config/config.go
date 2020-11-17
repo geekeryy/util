@@ -1,4 +1,4 @@
-// @Description  TODO
+// @Description  加载配置
 // @Author  	 jiangyang  
 // @Created  	 2020/10/30 5:30 下午
 package config
@@ -12,7 +12,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-var c Config
+var c  *Config
 
 // 配置结构体
 type Config struct {
@@ -22,12 +22,18 @@ type Config struct {
 	Redis   redis.Config   `mapstructure:"redis"`
 }
 
-func GetConfig() Config {
-	return c
+// 获取配置信息
+// 全局只加载一次配置
+func GetConfig(cfgFile ...string) *Config {
+	if c != nil {
+		return c
+	}
+	return LoadConfig(cfgFile...)
 }
 
 // 加载配置
-func LoadConfig(cfgFile ...string) Config {
+// 可多次加载不同配置
+func LoadConfig(cfgFile ...string) *Config {
 	if len(cfgFile) > 0 && cfgFile[0] != "" {
 		viper.SetConfigFile(cfgFile[0])
 	} else {
@@ -42,9 +48,10 @@ func LoadConfig(cfgFile ...string) Config {
 
 	logrus.Info("use config file:", viper.ConfigFileUsed())
 
-	err := viper.Unmarshal(&c)
-	if err != nil {
+	c = &Config{}
+	if err := viper.Unmarshal(c); err != nil {
 		logrus.Fatal(err)
 	}
+
 	return c
 }

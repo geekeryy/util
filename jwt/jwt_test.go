@@ -10,15 +10,21 @@ import (
 )
 
 func TestCreateToken(t *testing.T) {
-	token, err := jwt.CreateToken(&jwt.Business{
-		UID:       1,
-		Role:      1,
-	},0)
+	token, err := jwt.CreateToken(jwt.Business{
+		UID:  1,
+		Role: 2,
+	}, 0)
 	log.Println(token, err)
 
-	bus := &jwt.Business{}
-	if err := jwt.ParseToken(token.Token, bus); err != nil {
-		t.Error(err)
+	if bus, err := jwt.ParseToken(token.Token); err != nil {
+		t.Errorf("%+v",err)
+	} else {
+
+		if b, ok := bus.(map[string]interface{}); ok {
+			log.Println(b)
+		}
+
+		log.Println(bus)
 	}
-	log.Println(err, bus)
+
 }

@@ -1,8 +1,11 @@
+// @Description  发送邮件
+// @Author  	 jiangyang  
+// @Created  	 2020/11/17 4:12 下午
 package email
 
 import (
-	"github.com/spf13/viper"
-	"gopkg.in/gomail.v2"
+"github.com/spf13/viper"
+"gopkg.in/gomail.v2"
 )
 
 // 发送单封邮件
@@ -16,3 +19,4 @@ func SendMail(mailTo []string, subject string, body string) error {
 	err := d.DialAndSend(m)
 	return err
 }
+

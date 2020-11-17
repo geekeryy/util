@@ -1,3 +1,6 @@
+// @Description  日志
+// @Author  	 jiangyang
+// @Created  	 2020/11/17 4:12 下午
 package log
 
 import (
