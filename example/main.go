@@ -7,11 +7,13 @@ import (
 	"encoding/json"
 	"github.com/comeonjy/util/config"
 	"github.com/comeonjy/util/ctx"
+	"github.com/comeonjy/util/errno"
 	"github.com/comeonjy/util/jwt"
 	"github.com/comeonjy/util/middlewares"
+	"github.com/comeonjy/util/mysql"
+	"github.com/comeonjy/util/rbac"
 	"github.com/comeonjy/util/server"
 	"github.com/gin-gonic/gin"
-	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"net/http"
@@ -20,25 +22,25 @@ import (
 
 func init() {
 	config.LoadConfig()
+	mysql.Init(config.GetConfig().Mysql)
+	rbac.Init(config.GetConfig().Rbac)
 }
 
 func main() {
 	r := gin.Default()
 	r.GET("", func(ctx *gin.Context) {
 		logrus.Info("sleep...start")
-		time.Sleep(4 * time.Second)
+		//time.Sleep(4 * time.Second)
 		logrus.Info("sleep...end")
 		ctx.JSON(http.StatusOK, gin.H{"msg": "ok"})
 	})
 
 	r.GET("token", ctx.Handle(token))
 
-	r.Use(middlewares.JwtAuth())
-
-	r.GET("/ping", ctx.Handle(ping))
-
-	r.Use(middlewares.Rbac(nil)).GET("/auth", ctx.Handle(ping))
-
+	auth := r.Group("")
+	auth.Use(middlewares.JwtAuth())
+	auth.GET("/ping", ctx.Handle(ping))
+	auth.Use(middlewares.Rbac(rbac.Check)).GET("/auth", ctx.Handle(ping))
 	server.Server(r, viper.GetInt("http_port"))
 
 }
@@ -59,7 +61,7 @@ func token(ctx *ctx.Context) {
 func ping(ctx *ctx.Context) {
 	bus, exists := ctx.Get("business")
 	if !exists {
-		ctx.Fail(errors.New("business not found!"))
+		ctx.Fail(errno.BusNotFound)
 		return
 	}
 	b := jwt.Business{}

@@ -4,15 +4,17 @@
 package config
 
 import (
+	"github.com/comeonjy/util/email"
 	"github.com/comeonjy/util/log"
 	"github.com/comeonjy/util/mongodb"
 	"github.com/comeonjy/util/mysql"
+	"github.com/comeonjy/util/rbac"
 	"github.com/comeonjy/util/redis"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
-var c  *Config
+var c *Config
 
 // 配置结构体
 type Config struct {
@@ -20,6 +22,8 @@ type Config struct {
 	Log     log.Config     `mapstructure:"log"`
 	Mongodb mongodb.Config `mapstructure:"mongodb"`
 	Redis   redis.Config   `mapstructure:"redis"`
+	Email   email.Config   `mapstructure:"email"`
+	Rbac    rbac.Config    `mapstructure:"rbac"`
 }
 
 // 获取配置信息

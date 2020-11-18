@@ -24,7 +24,11 @@ func (c *Context) Success(data interface{}) {
 }
 
 // 错误返回
-func (c *Context) Fail(err error) {
+func (c *Context) Fail(err error ,statusArr ...int) {
+	status:=http.StatusBadRequest
+	if len(statusArr)>0 {
+		status=statusArr[0]
+	}
 	logrus.Error(err)
 	ret := gin.H{}
 	if e, ok := err.(*errno.Errno); ok {
@@ -35,7 +39,7 @@ func (c *Context) Fail(err error) {
 		ret["msg"] = "未知错误"
 		ret["err"] = err
 	}
-	c.Context.AbortWithStatusJSON(http.StatusBadRequest, ret)
+	c.Context.AbortWithStatusJSON(status, ret)
 }
 
 // 包装上下文

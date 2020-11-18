@@ -1,6 +1,14 @@
-// @Description  TODO
+// @Description  redis
 // @Author  	 jiangyang  
 // @Created  	 2020/11/2 10:02 上午
+
+// Example Config:
+// redis:
+//   addr: 127.0.0.1:6379
+//   password:
+//   db: 0
+//   pool_size: 100
+
 package redis
 
 import (

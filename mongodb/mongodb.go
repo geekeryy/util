@@ -1,6 +1,14 @@
 // @Description  mongo
 // @Author  	 jiangyang
 // @Created  	 2020/11/17 4:12 下午
+
+// Example Config:
+// mongodb:
+//   addr: 127.0.0.1:27017
+//   database: demo
+//   username:
+//   password:
+
 package mongodb
 
 import (

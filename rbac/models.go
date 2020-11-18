@@ -3,29 +3,32 @@
 // @Created  	 2020/11/17 11:26 上午
 package rbac
 
+import "github.com/jinzhu/gorm"
+
 type User struct {
-	ID   uint   `json:"id"`
+	gorm.Model
 	Name string `json:"name"`
 }
 
 type Role struct {
-	ID   uint   `json:"id"`
+	gorm.Model
 	Name string `json:"name"`
 }
 
 type Power struct {
-	ID    uint   `json:"id"`
+	gorm.Model
 	Title string `json:"title"`
+	Url   string `json:"url"`
 }
 
 type UserRole struct {
-	ID     uint `json:"id"`
-	UID    uint `json:"uid"`
-	RoleID uint `json:"role_id"`
+	gorm.Model
+	UID uint `json:"uid"`
+	RID uint `json:"rid"`
 }
 
 type RolePower struct {
-	ID      uint `json:"id"`
+	gorm.Model
 	RID     uint `json:"rid"`
 	PowerID uint `json:"power_id"`
 }

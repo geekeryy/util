@@ -37,3 +37,9 @@ email:
   pass:
   host: smtp.qq.com
   port: 465
+
+# RBAC配置
+rbac:
+  user: admin
+  password: 123456
+  frontend: "http://public-10.cdn.jiangyang.me/rbac/index.html"

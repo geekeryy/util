@@ -1,16 +1,17 @@
-package email
+package email_test
 
 import (
 	"github.com/comeonjy/util/config"
+	"github.com/comeonjy/util/email"
 	"testing"
 )
 
 func init()  {
-	config.LoadConfig()
+	email.Init(config.GetConfig().Email)
 }
 
 func TestSendMail(t *testing.T) {
-	err := SendMail([]string{"1126254578@qq.com"}, "subject", "你好")
+	err := email.SendMail([]string{"1126254578@qq.com"}, "subject", "你好")
 	if err != nil {
 		t.Error(err)
 	}

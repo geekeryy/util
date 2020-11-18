@@ -4,26 +4,28 @@
 package middlewares
 
 import (
-	"errors"
+	core "github.com/comeonjy/util/ctx"
+	"github.com/comeonjy/util/errno"
 	"github.com/comeonjy/util/jwt"
 	"github.com/comeonjy/util/tool"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
-func Rbac(checkFunc func(interface{}) error) func(ctx *gin.Context) {
-	return func(ctx *gin.Context) {
+func Rbac(checkFunc func(interface{}, string) error) func(context *gin.Context) {
+	return func(context *gin.Context) {
+		ctx := core.Context{
+			Context: context,
+		}
 		bus, exists := ctx.Get("business")
 		if !exists {
-			ctx.JSON(http.StatusBadRequest, errors.New("business not found"))
-			ctx.Abort()
+			ctx.Fail(errno.BusNotFound)
 			return
 		}
 
 		if checkFunc != nil {
-			if err := checkFunc(bus); err != nil {
-				ctx.JSON(http.StatusForbidden, err.Error())
-				ctx.Abort()
+			if err := checkFunc(bus, ctx.Request.URL.String()); err != nil {
+				ctx.Fail(err,http.StatusForbidden)
 				return
 			}
 		}
@@ -35,14 +37,13 @@ func Rbac(checkFunc func(interface{}) error) func(ctx *gin.Context) {
 // Example:
 // 权限校验例子
 // bus: ctx中存储的interface类型的业务相关信息
-func checkFunc(bus interface{}) error {
+func checkFunc(bus interface{}, url string) error {
 	b := jwt.Business{}
 	if err := tool.InterfaceToPointer(&b, bus); err != nil {
 		return err
 	}
 
 	// TODO 权限校验 开箱即用
-
 
 	return nil
 }

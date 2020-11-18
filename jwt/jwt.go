@@ -21,8 +21,8 @@ var (
 )
 
 type Business struct {
-	UID  uint  `json:"uid"`
-	Role uint8 `json:"role"`
+	UID  uint `json:"uid"`
+	Role uint `json:"role"`
 }
 
 type CustomClaims struct {

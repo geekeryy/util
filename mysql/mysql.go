@@ -1,6 +1,18 @@
 // @Description  mysql
 // @Author  	 jiangyang  
 // @Created  	 2020/10/30 3:44 下午
+
+// Example Config:
+// mysql:
+//   user: root
+//   password: 123456
+//   host: 127.0.0.1
+//   port: 3306
+//   dbname: demo
+//   max_idle_conn: 10
+//   max_open_conn: 100
+//   debug: true
+
 package mysql
 
 import (
