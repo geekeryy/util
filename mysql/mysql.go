@@ -34,14 +34,14 @@ var (
 
 // Mysql配置结构体
 type Config struct {
-	User        string `json:"user" yaml:"user"`                   // 用户名
-	Password    string `json:"password" yaml:"password"`           // 密码
-	Host        string `json:"host" yaml:"host"`                   // 主机地址
-	Port        int    `json:"port" yaml:"port"`                   // 端口号
-	Dbname      string `json:"dbname" yaml:"dbname"`               // 数据库名
-	MaxIdleConn int    `json:"max_idle_conn" yaml:"max_idle_conn"` // 最大空闲连接
-	MaxOpenConn int    `json:"max_open_conn" yaml:"max_open_conn"` // 最大活跃连接
-	Debug       bool   `json:"debug" yaml:"debug"`                 // 是否开启Debug（开启Debug会打印数据库操作日志）
+	User        string `json:"user" yaml:"user"`                                                 // 用户名
+	Password    string `json:"password" yaml:"password"`                                         // 密码
+	Host        string `json:"host" yaml:"host"`                                                 // 主机地址
+	Port        int    `json:"port" yaml:"port"`                                                 // 端口号
+	Dbname      string `json:"dbname" yaml:"dbname"`                                             // 数据库名
+	MaxIdleConn int    `json:"max_idle_conn" yaml:"max_idle_conn" mapstructure:"max_idle_conn"`  // 最大空闲连接
+	MaxOpenConn int    `json:"max_open_conn" yaml:"max_open_conn" mapstructure:"max_open_conn" ` // 最大活跃连接
+	Debug       bool   `json:"debug" yaml:"debug"`                                               // 是否开启Debug（开启Debug会打印数据库操作日志）
 }
 
 // 初始化数据库

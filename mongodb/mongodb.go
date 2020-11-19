@@ -38,7 +38,6 @@ type Config struct {
 	Password string `json:"password" yaml:"password"`
 	Addr     string `json:"addr" yaml:"addr"`
 	Database string `json:"database" yaml:"database"`
-	MaxPool  uint64 `json:"max_pool" yaml:"max_pool"`
 }
 
 func Init(cfg Config) {
@@ -76,7 +75,7 @@ func Init(cfg Config) {
 	})
 }
 
-func Disconnect() error {
+func Close() error {
 	if client != nil {
 		if err := client.Disconnect(nil); err != nil {
 			return errors.WithStack(err)

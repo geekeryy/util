@@ -25,7 +25,7 @@ type Config struct {
 	Addr     string `json:"addr" yaml:"addr"`
 	Password string `json:"password" yaml:"password"`
 	Db       int    `json:"db" yaml:"db"`
-	PoolSize int    `json:"pool_size" yaml:"pool_size"`
+	PoolSize int    `json:"pool_size" yaml:"pool_size" mapstructure:"pool_size"`
 }
 
 func Init(cfg Config) {

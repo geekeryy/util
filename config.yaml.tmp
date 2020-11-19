@@ -43,3 +43,9 @@ rbac:
   user: admin
   password: 123456
   frontend: "http://public-10.cdn.jiangyang.me/rbac/index.html"
+
+# MQTT
+mqtt:
+  broker: "tcp://broker.emqx.io:1883"
+  client_id: webhook_server
+  keep_alive: 60

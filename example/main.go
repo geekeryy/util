@@ -41,6 +41,9 @@ func main() {
 	auth.Use(middlewares.JwtAuth())
 	auth.GET("/ping", ctx.Handle(ping))
 	auth.Use(middlewares.Rbac(rbac.Check)).GET("/auth", ctx.Handle(ping))
+
+	rbac.Register(r,"/rbac")
+
 	server.Server(r, viper.GetInt("http_port"))
 
 }

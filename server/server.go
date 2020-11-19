@@ -5,7 +5,6 @@ package server
 
 import (
 	"context"
-	"github.com/comeonjy/util/rbac"
 	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -19,7 +18,6 @@ import (
 
 func Server(router *gin.Engine, port int) {
 	pprof.Register(router, "/pprof")
-	rbac.Register(router,"/rbac")
 	srv := &http.Server{
 		Addr:    ":" + strconv.Itoa(port),
 		Handler: router,

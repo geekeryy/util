@@ -7,6 +7,7 @@ import (
 	"github.com/comeonjy/util/email"
 	"github.com/comeonjy/util/log"
 	"github.com/comeonjy/util/mongodb"
+	"github.com/comeonjy/util/mqtt"
 	"github.com/comeonjy/util/mysql"
 	"github.com/comeonjy/util/rbac"
 	"github.com/comeonjy/util/redis"
@@ -24,6 +25,7 @@ type Config struct {
 	Redis   redis.Config   `mapstructure:"redis"`
 	Email   email.Config   `mapstructure:"email"`
 	Rbac    rbac.Config    `mapstructure:"rbac"`
+	Mqtt    mqtt.Config    `mapstructure:"mqtt"`
 }
 
 // 获取配置信息
@@ -53,6 +55,7 @@ func LoadConfig(cfgFile ...string) *Config {
 	logrus.Info("use config file:", viper.ConfigFileUsed())
 
 	c = &Config{}
+	// 蛇形字段需加上 mapstructure 标签
 	if err := viper.Unmarshal(c); err != nil {
 		logrus.Fatal(err)
 	}
