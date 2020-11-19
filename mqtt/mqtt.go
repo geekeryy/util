@@ -1,19 +1,27 @@
-// @Description  TODO
+// @Description  mqtt消息服务
 // @Author  	 jiangyang  
 // @Created  	 2020/11/19 10:51 上午
+
+// Example Config:
+// mqtt:
+//   broker: tcp://broker.emqx.io:1883
+//   client_id: webhook_server
+//   keep_alive: 60
+
 package mqtt
 
 import (
 	"encoding/json"
-	"github.com/sirupsen/logrus"
 	"time"
 
 	"github.com/eclipse/paho.mqtt.golang"
+	"github.com/sirupsen/logrus"
 )
 
 var cfg Config
 var client mqtt.Client
 var topicArr []string
+var subscribeArr []func() error
 
 type Config struct {
 	Broker    string `json:"broker" yaml:"broker"`
@@ -22,7 +30,7 @@ type Config struct {
 }
 
 var f mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message) {
-	logrus.Info(msg.MessageID(),msg.Topic(),string(msg.Payload()),msg.Qos(),msg.Retained())
+	logrus.Info(msg.MessageID(), msg.Topic(), string(msg.Payload()), msg.Qos(), msg.Retained())
 }
 
 func Init(c Config) {
@@ -30,7 +38,6 @@ func Init(c Config) {
 	mqtt.ERROR = logrus.New()
 	mqtt.CRITICAL = logrus.New()
 	mqtt.WARN = logrus.New()
-	//mqtt.DEBUG = logrus.New()
 
 	opts := mqtt.NewClientOptions().AddBroker(cfg.Broker).SetClientID(cfg.ClientID)
 
@@ -39,19 +46,30 @@ func Init(c Config) {
 	opts.SetPingTimeout(5 * time.Second)
 	opts.SetCleanSession(false)
 	opts.SetAutoReconnect(true)
+	opts.SetConnectionLostHandler(func(c mqtt.Client, err error) {
+		logrus.Info("ConnectionLost")
+		// 重连后重新订阅
+		for _,v:=range subscribeArr {
+			if err:=v();err!=nil{
+				logrus.Error("ConnectionLost",err)
+			}
+		}
+
+	})
+	opts.SetOnConnectHandler(func(c mqtt.Client) {
+		logrus.Info("OnConnect")
+	})
 
 	client = mqtt.NewClient(opts)
 	if token := client.Connect(); token.Wait() && token.Error() != nil {
 		logrus.Fatal(token.Error().Error())
 	}
-}
-
-func Conn() mqtt.Client {
-	return client
+	logrus.Info("mqtt connect successfully")
 }
 
 func Close() {
 	client.Unsubscribe(topicArr...)
+	logrus.Info("Unsubscribe: ",topicArr)
 	client.Disconnect(1000)
 }
 
@@ -61,6 +79,7 @@ type Message struct {
 	Time     int64       `json:"time"`
 }
 
+// 发布
 func Publish(topic string, qos byte, retained bool, msg Message) error {
 	msg.ClientID = cfg.ClientID
 	msg.Time = time.Now().Unix()
@@ -74,7 +93,19 @@ func Publish(topic string, qos byte, retained bool, msg Message) error {
 	return nil
 }
 
+
+// 订阅
 func Subscribe(onMessage mqtt.MessageHandler, qos byte, topics ...string) error {
+	topicArr = append(topicArr, topics...)
+	f := func() error {
+		return subscribe(onMessage, qos, topics...)
+	}
+	subscribeArr= append(subscribeArr, f)
+	return f()
+}
+
+
+func subscribe(onMessage mqtt.MessageHandler, qos byte, topics ...string) error {
 	filters := make(map[string]byte)
 	for _, v := range topics {
 		filters[v] = qos
@@ -82,6 +113,6 @@ func Subscribe(onMessage mqtt.MessageHandler, qos byte, topics ...string) error 
 	if token := client.SubscribeMultiple(filters, onMessage); token.Wait() && token.Error() != nil {
 		return token.Error()
 	}
-	topicArr=append(topicArr,topics...)
+	logrus.Info("Subscribe: ", topics, " success")
 	return nil
 }

@@ -17,11 +17,11 @@ package mysql
 
 import (
 	"fmt"
-	"github.com/pkg/errors"
 	"sync"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 

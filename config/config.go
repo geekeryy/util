@@ -4,6 +4,9 @@
 package config
 
 import (
+	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
+
 	"github.com/comeonjy/util/email"
 	"github.com/comeonjy/util/log"
 	"github.com/comeonjy/util/mongodb"
@@ -11,8 +14,6 @@ import (
 	"github.com/comeonjy/util/mysql"
 	"github.com/comeonjy/util/rbac"
 	"github.com/comeonjy/util/redis"
-	"github.com/sirupsen/logrus"
-	"github.com/spf13/viper"
 )
 
 var c *Config

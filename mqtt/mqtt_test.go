@@ -9,6 +9,7 @@ import (
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"github.com/sirupsen/logrus"
 	"testing"
+	"time"
 )
 
 func TestSubscribe(t *testing.T) {
@@ -17,11 +18,15 @@ func TestSubscribe(t *testing.T) {
 
 	defer mqttx.Close()
 
-	if err := mqttx.Subscribe(onMessage, 2, "demo/#"); err != nil {
+	if err := mqttx.Subscribe(onMessage, 2, "demo/1"); err != nil {
 		t.Error(err)
 	}
 
-	select {}
+	if err := mqttx.Subscribe(onMessage, 2, "demo/2"); err != nil {
+		t.Error(err)
+	}
+
+	time.Sleep(10*time.Second)
 }
 
 func onMessage(client mqtt.Client, msg mqtt.Message) {

@@ -5,15 +5,16 @@ package server
 
 import (
 	"context"
-	"github.com/gin-contrib/pprof"
-	"github.com/gin-gonic/gin"
-	"github.com/sirupsen/logrus"
 	"net/http"
 	"os"
 	"os/signal"
 	"strconv"
 	"syscall"
 	"time"
+
+	"github.com/gin-contrib/pprof"
+	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 )
 
 func Server(router *gin.Engine, port int) {

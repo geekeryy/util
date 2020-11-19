@@ -1,13 +1,15 @@
-// @Description  TODO
+// @Description  应用程序上下文
 // @Author  	 jiangyang  
 // @Created  	 2020/11/16 4:36 下午
 package ctx
 
 import (
-	"github.com/comeonjy/util/errno"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
-	"net/http"
+
+	"github.com/comeonjy/util/errno"
 )
 
 type Context struct {
@@ -24,10 +26,10 @@ func (c *Context) Success(data interface{}) {
 }
 
 // 错误返回
-func (c *Context) Fail(err error ,statusArr ...int) {
-	status:=http.StatusBadRequest
-	if len(statusArr)>0 {
-		status=statusArr[0]
+func (c *Context) Fail(err error, statusArr ...int) {
+	status := http.StatusBadRequest
+	if len(statusArr) > 0 {
+		status = statusArr[0]
 	}
 	logrus.Error(err)
 	ret := gin.H{}
@@ -48,4 +50,3 @@ func Handle(handle func(*Context)) gin.HandlerFunc {
 		handle(&Context{c})
 	}
 }
-

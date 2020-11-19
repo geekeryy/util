@@ -4,12 +4,14 @@
 package middlewares
 
 import (
+	"net/http"
+
+	"github.com/gin-gonic/gin"
+
 	core "github.com/comeonjy/util/ctx"
 	"github.com/comeonjy/util/errno"
 	"github.com/comeonjy/util/jwt"
 	"github.com/comeonjy/util/tool"
-	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 func Rbac(checkFunc func(interface{}, string) error) func(context *gin.Context) {
@@ -25,7 +27,7 @@ func Rbac(checkFunc func(interface{}, string) error) func(context *gin.Context) 
 
 		if checkFunc != nil {
 			if err := checkFunc(bus, ctx.Request.URL.String()); err != nil {
-				ctx.Fail(err,http.StatusForbidden)
+				ctx.Fail(err, http.StatusForbidden)
 				return
 			}
 		}

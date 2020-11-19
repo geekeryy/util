@@ -8,7 +8,7 @@
 - [x] log 日志（可扩展）
 - [ ] middlewares 中间件
 - [x] mongodb mongo
-- [x] mqtt mqtt消息服务
+- [x] mqtt mqtt消息服务 实现自动重接并订阅
 - [x] mysql mysql
 - [ ] rbac 基于角色的权限访问控制（TODO 作为插件独立出来）
 - [x] redis redis

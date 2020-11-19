@@ -4,10 +4,10 @@
 package jwt
 
 import (
-	"github.com/pkg/errors"
 	"time"
 
 	jwtgo "github.com/dgrijalva/jwt-go"
+	"github.com/pkg/errors"
 )
 
 const DefaultExpireDuration = time.Hour * 24 * 30

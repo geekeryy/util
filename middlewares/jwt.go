@@ -4,9 +4,11 @@
 package middlewares
 
 import (
-	"github.com/comeonjy/util/jwt"
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"github.com/comeonjy/util/jwt"
+
+	"github.com/gin-gonic/gin"
 )
 
 func JwtAuth() func(ctx *gin.Context) {

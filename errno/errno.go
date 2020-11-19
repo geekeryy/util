@@ -1,4 +1,4 @@
-// @Description  TODO
+// @Description  错误处理
 // @Author  	 jiangyang  
 // @Created  	 2020/11/17 9:51 上午
 package errno

@@ -14,10 +14,10 @@ package mongodb
 import (
 	"context"
 	"fmt"
-	"github.com/pkg/errors"
 	"sync"
 	"time"
 
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"

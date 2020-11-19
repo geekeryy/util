@@ -5,6 +5,13 @@ package main
 
 import (
 	"encoding/json"
+	"net/http"
+	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
+
 	"github.com/comeonjy/util/config"
 	"github.com/comeonjy/util/ctx"
 	"github.com/comeonjy/util/errno"
@@ -13,11 +20,6 @@ import (
 	"github.com/comeonjy/util/mysql"
 	"github.com/comeonjy/util/rbac"
 	"github.com/comeonjy/util/server"
-	"github.com/gin-gonic/gin"
-	"github.com/sirupsen/logrus"
-	"github.com/spf13/viper"
-	"net/http"
-	"time"
 )
 
 func init() {
@@ -42,7 +44,7 @@ func main() {
 	auth.GET("/ping", ctx.Handle(ping))
 	auth.Use(middlewares.Rbac(rbac.Check)).GET("/auth", ctx.Handle(ping))
 
-	rbac.Register(r,"/rbac")
+	rbac.Register(r, "/rbac")
 
 	server.Server(r, viper.GetInt("http_port"))
 
