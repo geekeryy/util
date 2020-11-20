@@ -4,6 +4,7 @@
 package mqtt_test
 
 import (
+	"encoding/json"
 	"github.com/comeonjy/util/config"
 	mqttx "github.com/comeonjy/util/mqtt"
 	mqtt "github.com/eclipse/paho.mqtt.golang"
@@ -26,7 +27,7 @@ func TestSubscribe(t *testing.T) {
 		t.Error(err)
 	}
 
-	time.Sleep(10*time.Second)
+	time.Sleep(10 * time.Second)
 }
 
 func onMessage(client mqtt.Client, msg mqtt.Message) {
@@ -41,13 +42,16 @@ func TestPublish1(t *testing.T) {
 	msg := mqttx.Message{
 		ClientID: cfg.ClientID,
 		Data:     "hello1",
+		Time:     time.Now().Unix(),
 	}
-	if err := mqttx.Publish("demo/1", 2, false, msg); err != nil {
+	data, err := json.Marshal(msg)
+	if err != nil {
 		t.Error(err)
 	}
-	select {
-
+	if err := mqttx.Publish("demo/1", 2, false, data); err != nil {
+		t.Error(err)
 	}
+	select {}
 
 }
 
@@ -59,11 +63,14 @@ func TestPublish2(t *testing.T) {
 	msg := mqttx.Message{
 		ClientID: cfg.ClientID,
 		Data:     "hello2",
+		Time:     time.Now().Unix(),
 	}
-	if err := mqttx.Publish("demo/2", 2, false, msg); err != nil {
+	data, err := json.Marshal(msg)
+	if err != nil {
 		t.Error(err)
 	}
-	select {
-
-}
+	if err := mqttx.Publish("demo/2", 2, false, data); err != nil {
+		t.Error(err)
+	}
+	select {}
 }

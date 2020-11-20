@@ -11,7 +11,6 @@
 package mqtt
 
 import (
-	"encoding/json"
 	"time"
 
 	"github.com/eclipse/paho.mqtt.golang"
@@ -80,13 +79,8 @@ type Message struct {
 }
 
 // 发布
-func Publish(topic string, qos byte, retained bool, msg Message) error {
-	msg.ClientID = cfg.ClientID
-	msg.Time = time.Now().Unix()
-	data, err := json.Marshal(msg)
-	if err != nil {
-		return err
-	}
+func Publish(topic string, qos byte, retained bool, data []byte) error {
+
 	if token := client.Publish(topic, qos, retained, data); token.Wait() && token.Error() != nil {
 		return token.Error()
 	}
