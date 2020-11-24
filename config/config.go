@@ -4,6 +4,7 @@
 package config
 
 import (
+	"github.com/comeonjy/util/rabbitmq"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 
@@ -20,13 +21,14 @@ var c *Config
 
 // 配置结构体
 type Config struct {
-	Mysql   mysql.Config   `mapstructure:"mysql"`
-	Log     log.Config     `mapstructure:"log"`
-	Mongodb mongodb.Config `mapstructure:"mongodb"`
-	Redis   redis.Config   `mapstructure:"redis"`
-	Email   email.Config   `mapstructure:"email"`
-	Rbac    rbac.Config    `mapstructure:"rbac"`
-	Mqtt    mqtt.Config    `mapstructure:"mqtt"`
+	Mysql    mysql.Config    `mapstructure:"mysql"`
+	Log      log.Config      `mapstructure:"log"`
+	Mongodb  mongodb.Config  `mapstructure:"mongodb"`
+	Redis    redis.Config    `mapstructure:"redis"`
+	Email    email.Config    `mapstructure:"email"`
+	Rbac     rbac.Config     `mapstructure:"rbac"`
+	Mqtt     mqtt.Config     `mapstructure:"mqtt"`
+	Rabbitmq rabbitmq.Config `mapstructure:"rabbitmq"`
 }
 
 // 获取配置信息
