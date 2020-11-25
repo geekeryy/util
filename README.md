@@ -15,3 +15,5 @@
 - [x] redis 缓存
 - [x] server 启动http服务
 - [x] tool 工具函数库
+- [ ] kafka
+- [ ] grpc
