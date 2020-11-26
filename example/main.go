@@ -5,6 +5,8 @@ package main
 
 import (
 	"encoding/json"
+	"github.com/comeonjy/util/elastic"
+	"github.com/comeonjy/util/log"
 	"net/http"
 	"time"
 
@@ -24,6 +26,8 @@ import (
 
 func init() {
 	config.LoadConfig()
+	elastic.Init(config.GetConfig().Elastic)
+	log.Init(config.GetConfig().Log)
 	mysql.Init(config.GetConfig().Mysql)
 	rbac.Init(config.GetConfig().Rbac)
 }

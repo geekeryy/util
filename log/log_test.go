@@ -5,6 +5,7 @@ package log_test
 
 import (
 	"github.com/comeonjy/util/config"
+	"github.com/comeonjy/util/elastic"
 	"github.com/comeonjy/util/log"
 	"github.com/sirupsen/logrus"
 	"testing"
@@ -15,6 +16,7 @@ func init()  {
 }
 
 func TestInit(t *testing.T) {
+	elastic.Init(config.GetConfig().Elastic)
 	log.Init(config.GetConfig().Log)
-	logrus.Info("xixi")
+	logrus.WithField("method","TestInit").Info("xixi")
 }

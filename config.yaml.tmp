@@ -49,3 +49,6 @@ mqtt:
   broker: "tcp://broker.emqx.io:1883"
   client_id: webhook_server
   keep_alive: 60
+
+elastic:
+  Address: http://localhost:9200

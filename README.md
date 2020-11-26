@@ -5,8 +5,10 @@
 - [x] email 邮件
 - [x] errno 错误处理（可扩展）
 - [x] jwt 鉴权
-- [x] log 日志（可扩展）
-- [x] middlewares 中间件（可扩展）
+- [x] log 日志
+  - [x] elasticsearch Hook
+- [x] middlewares 中间件
+  - [x] jwt
 - [x] mongodb mongo
 - [x] mqtt mqtt消息服务 实现自动重接并订阅
 - [x] mysql mysql
@@ -15,5 +17,6 @@
 - [x] redis 缓存
 - [x] server 启动http服务
 - [x] tool 工具函数库
+- [x] elastic elasticsearch 
 - [ ] kafka
 - [ ] grpc

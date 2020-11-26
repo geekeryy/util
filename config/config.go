@@ -4,6 +4,7 @@
 package config
 
 import (
+	"github.com/comeonjy/util/elastic"
 	"github.com/comeonjy/util/rabbitmq"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -29,6 +30,7 @@ type Config struct {
 	Rbac     rbac.Config     `mapstructure:"rbac"`
 	Mqtt     mqtt.Config     `mapstructure:"mqtt"`
 	Rabbitmq rabbitmq.Config `mapstructure:"rabbitmq"`
+	Elastic  elastic.Config  `mapstructure:"elastic"`
 }
 
 // 获取配置信息
