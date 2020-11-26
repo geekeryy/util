@@ -36,7 +36,6 @@ func Init(cfg Config) {
 		log.Fatal("elasticsearch info res is error")
 	}
 	client = es
-	log.Println(res)
 }
 
 func Conn() *elasticsearch.Client {

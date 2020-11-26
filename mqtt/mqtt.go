@@ -11,6 +11,7 @@
 package mqtt
 
 import (
+	"os"
 	"time"
 
 	"github.com/eclipse/paho.mqtt.golang"
@@ -34,9 +35,30 @@ var f mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message) {
 
 func Init(c Config) {
 	cfg = c
-	mqtt.ERROR = logrus.New()
-	mqtt.CRITICAL = logrus.New()
-	mqtt.WARN = logrus.New()
+	mqtt.ERROR = &logrus.Logger{
+		Out:          os.Stderr,
+		Formatter:    new(logrus.JSONFormatter),
+		Hooks:        make(logrus.LevelHooks),
+		Level:        logrus.ErrorLevel,
+		ExitFunc:     os.Exit,
+		ReportCaller: false,
+	}
+	mqtt.CRITICAL = &logrus.Logger{
+		Out:          os.Stderr,
+		Formatter:    new(logrus.JSONFormatter),
+		Hooks:        make(logrus.LevelHooks),
+		Level:        logrus.PanicLevel,
+		ExitFunc:     os.Exit,
+		ReportCaller: false,
+	}
+	mqtt.WARN = &logrus.Logger{
+		Out:          os.Stderr,
+		Formatter:    new(logrus.JSONFormatter),
+		Hooks:        make(logrus.LevelHooks),
+		Level:        logrus.WarnLevel,
+		ExitFunc:     os.Exit,
+		ReportCaller: false,
+	}
 
 	opts := mqtt.NewClientOptions().AddBroker(cfg.Broker).SetClientID(cfg.ClientID)
 

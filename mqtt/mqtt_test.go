@@ -15,7 +15,6 @@ import (
 
 func TestSubscribe(t *testing.T) {
 	mqttx.Init(config.GetConfig().Mqtt)
-	logrus.SetFormatter(&logrus.TextFormatter{})
 
 	defer mqttx.Close()
 

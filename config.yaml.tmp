@@ -9,6 +9,7 @@ http_port: 8080
 # 日志配置
 log:
   format: json
+  hook: elasticsearch
 
 # 数据库配置
 mysql:
@@ -51,4 +52,4 @@ mqtt:
   keep_alive: 60
 
 elastic:
-  Address: http://localhost:9200
+  address: http://localhost:9200

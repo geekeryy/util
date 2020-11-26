@@ -21,6 +21,7 @@ func Init(cfg Config) {
 	switch cfg.Hook {
 	case "elasticsearch":
 		logrus.AddHook(&EsHook{})
+		logrus.Info("log hook ", cfg.Hook," success")
 	}
 	switch cfg.Format {
 	case "json":
@@ -28,7 +29,6 @@ func Init(cfg Config) {
 	case "text":
 		logrus.SetFormatter(&logrus.TextFormatter{})
 	}
-	logrus.Info("log ", cfg.Hook, cfg.Hook)
 }
 
 type EsHook struct{}
