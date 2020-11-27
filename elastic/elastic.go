@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/elastic/go-elasticsearch/v8"
+	"github.com/sirupsen/logrus"
 	"log"
 )
 
@@ -36,6 +37,7 @@ func Init(cfg Config) {
 		log.Fatal("elasticsearch info res is error")
 	}
 	client = es
+	logrus.Info("elasticsearch connect successfully")
 }
 
 func Conn() *elasticsearch.Client {

@@ -4,6 +4,7 @@
 package rabbitmq
 
 import (
+	"github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
 	"log"
 )
@@ -21,6 +22,7 @@ func Init(cfg Config) {
 		log.Fatal(err)
 	}
 	conn = _c
+	logrus.Info("rabbitmq connect successfully")
 }
 
 func Conn() *amqp.Connection {
@@ -31,6 +33,7 @@ func Close() {
 	if conn != nil {
 		conn.Close()
 	}
+	logrus.Info("rabbitmq connect closed")
 }
 
 // 生产者

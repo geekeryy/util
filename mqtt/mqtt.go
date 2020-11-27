@@ -70,6 +70,7 @@ func Close() {
 	client.Unsubscribe(topicArr...)
 	logrus.Info("mqtt Unsubscribe: ",topicArr)
 	client.Disconnect(1000)
+	logrus.Info("mqtt connect closed")
 }
 
 type Message struct {

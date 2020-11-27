@@ -39,6 +39,7 @@ func Init(cfg Config) {
 	if _, err := client.Ping(context.Background()).Result(); err != nil {
 		logrus.Fatal(err)
 	}
+	logrus.Info("redis connect successfully")
 
 }
 
@@ -50,4 +51,5 @@ func Close() {
 	if client != nil {
 		client.Close()
 	}
+	logrus.Info("redis connect closed")
 }

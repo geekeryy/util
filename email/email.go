@@ -12,6 +12,7 @@
 package email
 
 import (
+	"github.com/sirupsen/logrus"
 	"gopkg.in/gomail.v2"
 )
 
@@ -26,6 +27,7 @@ type Config struct {
 
 func Init(c Config) {
 	cfg = &c
+	logrus.Info("email init successfully")
 }
 
 func Conn() *Config {

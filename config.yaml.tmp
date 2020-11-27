@@ -9,7 +9,11 @@ http_port: 8080
 # 日志配置
 log:
   format: json
-  hook: elasticsearch
+  hooks:
+    - elasticsearch
+    - email
+  emails:
+    - 1********8@qq.com
   level: info
   report_caller: true
 
@@ -50,8 +54,13 @@ rbac:
 # MQTT
 mqtt:
   broker: "tcp://broker.emqx.io:1883"
-  client_id: webhook_server
+  client_id: util_server
   keep_alive: 60
+
+# Rabbitmq
+rabbitmq:
+  addr: amqp://guest:guest@127.0.0.1:5672/
+  queue_name: util_queue
 
 elastic:
   address: http://localhost:9200
