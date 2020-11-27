@@ -7,6 +7,7 @@
 - [x] jwt 鉴权
 - [x] log 日志
   - [x] elasticsearch Hook
+  - [x] email Hook
 - [x] middlewares 中间件
   - [x] jwt
 - [x] mongodb mongo

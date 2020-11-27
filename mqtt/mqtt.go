@@ -11,7 +11,6 @@
 package mqtt
 
 import (
-	"os"
 	"time"
 
 	"github.com/eclipse/paho.mqtt.golang"
@@ -35,30 +34,9 @@ var f mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message) {
 
 func Init(c Config) {
 	cfg = c
-	mqtt.ERROR = &logrus.Logger{
-		Out:          os.Stderr,
-		Formatter:    new(logrus.JSONFormatter),
-		Hooks:        make(logrus.LevelHooks),
-		Level:        logrus.ErrorLevel,
-		ExitFunc:     os.Exit,
-		ReportCaller: false,
-	}
-	mqtt.CRITICAL = &logrus.Logger{
-		Out:          os.Stderr,
-		Formatter:    new(logrus.JSONFormatter),
-		Hooks:        make(logrus.LevelHooks),
-		Level:        logrus.PanicLevel,
-		ExitFunc:     os.Exit,
-		ReportCaller: false,
-	}
-	mqtt.WARN = &logrus.Logger{
-		Out:          os.Stderr,
-		Formatter:    new(logrus.JSONFormatter),
-		Hooks:        make(logrus.LevelHooks),
-		Level:        logrus.WarnLevel,
-		ExitFunc:     os.Exit,
-		ReportCaller: false,
-	}
+	mqtt.ERROR = logrus.StandardLogger()
+	mqtt.CRITICAL = logrus.StandardLogger()
+	mqtt.WARN = logrus.StandardLogger()
 
 	opts := mqtt.NewClientOptions().AddBroker(cfg.Broker).SetClientID(cfg.ClientID)
 
@@ -68,17 +46,17 @@ func Init(c Config) {
 	opts.SetCleanSession(false)
 	opts.SetAutoReconnect(true)
 	opts.SetConnectionLostHandler(func(c mqtt.Client, err error) {
-		logrus.Info("ConnectionLost")
+		logrus.Info("mqtt 连接断开")
 		// 重连后重新订阅
 		for _,v:=range subscribeArr {
 			if err:=v();err!=nil{
-				logrus.Error("ConnectionLost",err)
+				logrus.Error("mqtt 重新订阅失败：",err)
 			}
 		}
 
 	})
 	opts.SetOnConnectHandler(func(c mqtt.Client) {
-		logrus.Info("OnConnect")
+		logrus.Info("mqtt 连接成功")
 	})
 
 	client = mqtt.NewClient(opts)
@@ -90,7 +68,7 @@ func Init(c Config) {
 
 func Close() {
 	client.Unsubscribe(topicArr...)
-	logrus.Info("Unsubscribe: ",topicArr)
+	logrus.Info("mqtt Unsubscribe: ",topicArr)
 	client.Disconnect(1000)
 }
 
@@ -129,6 +107,6 @@ func subscribe(onMessage mqtt.MessageHandler, qos byte, topics ...string) error 
 	if token := client.SubscribeMultiple(filters, onMessage); token.Wait() && token.Error() != nil {
 		return token.Error()
 	}
-	logrus.Info("Subscribe: ", topics, " success")
+	logrus.Info("mqtt Subscribe: ", topics, " success")
 	return nil
 }

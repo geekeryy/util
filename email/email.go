@@ -15,7 +15,7 @@ import (
 	"gopkg.in/gomail.v2"
 )
 
-var cfg Config
+var cfg *Config
 
 type Config struct {
 	User string `json:"user" yaml:"user"`
@@ -25,7 +25,11 @@ type Config struct {
 }
 
 func Init(c Config) {
-	cfg = c
+	cfg = &c
+}
+
+func Conn() *Config {
+	return cfg
 }
 
 // 发送单封邮件

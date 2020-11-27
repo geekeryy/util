@@ -1,53 +1,74 @@
 // @Description  日志
 // @Author  	 jiangyang
 // @Created  	 2020/11/17 4:12 下午
+
+// Example Config:
+// log:
+//  format: json
+//  hooks:
+//   - elasticsearch
+//   - email
+//   - mobile
+//  emails:
+//   - 1********8@qq.com
+//   - 151****1234
+//  level: info
+//  report_caller: true
+
 package log
 
 import (
-	"fmt"
 	"github.com/comeonjy/util/elastic"
+	"github.com/comeonjy/util/email"
 	"github.com/sirupsen/logrus"
-	"time"
 )
 
 type Config struct {
-	Format string `json:"format" yaml:"format"`
-	Hook   string `json:"hook" yaml:"hook"`
+	Format       string   `json:"format" yaml:"format"`
+	Level        string   `json:"level" yaml:"level"`
+	Hooks        []string `json:"hooks" yaml:"hooks"`
+	Emails       []string `json:"emails" yaml:"emails"`
+	Mobile       string   `json:"mobile" yaml:"mobile"`
+	ReportCaller bool     `json:"report_caller" yaml:"report_caller" mapstructure:"report_caller"`
 }
 
-// 设置日志格式
+// 初始化日志
 func Init(cfg Config) {
-	logrus.SetReportCaller(true)
-	switch cfg.Hook {
-	case "elasticsearch":
-		logrus.AddHook(&EsHook{})
-		logrus.Info("log hook ", cfg.Hook," success")
+
+	level, err := logrus.ParseLevel(cfg.Level)
+	if err != nil {
+		logrus.Errorf("日志等级解析失败 need[panic,fatal,error,warn,warning,info,debug,trace] get:[%s]", cfg.Level)
 	}
+
+	logrus.SetLevel(level)
+
+	logrus.SetReportCaller(cfg.ReportCaller)
+
+	for _, hook := range cfg.Hooks {
+		switch hook {
+		case "elasticsearch":
+			if elastic.Conn() != nil {
+				logrus.AddHook(&EsHook{})
+				logrus.Info("日志Hook添加成功：", hook)
+			} else {
+				logrus.Error("elasticsearch client 未初始化 hook未生效")
+			}
+		case "email":
+			if email.Conn() != nil {
+				logrus.AddHook(&EmailHook{MailTo: cfg.Emails})
+				logrus.Info("日志Hook添加成功：", hook)
+			} else {
+				logrus.Error("email 未初始化 hook未生效")
+			}
+		case "mobile":
+			// TODO
+		}
+	}
+
 	switch cfg.Format {
-	case "json":
-		logrus.SetFormatter(&logrus.JSONFormatter{})
 	case "text":
 		logrus.SetFormatter(&logrus.TextFormatter{})
+	default:
+		logrus.SetFormatter(&logrus.JSONFormatter{})
 	}
-}
-
-type EsHook struct{}
-
-func (hook *EsHook) Levels() []logrus.Level {
-	return logrus.AllLevels
-}
-func (hook *EsHook) Fire(entry *logrus.Entry) error {
-	doc := make(map[string]interface{})
-	for k, v := range entry.Data {
-		doc[k] = v
-	}
-	doc["timestamp"] = time.Now().Local()
-	doc["level"] = entry.Level
-	doc["message"] = entry.Message
-	doc["caller"] = fmt.Sprintf("%s:%d", entry.Caller.File, entry.Caller.Line)
-
-	if err := elastic.Index("demo", doc); err != nil {
-		return err
-	}
-	return nil
 }

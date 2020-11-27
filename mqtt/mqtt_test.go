@@ -6,6 +6,8 @@ package mqtt_test
 import (
 	"encoding/json"
 	"github.com/comeonjy/util/config"
+	"github.com/comeonjy/util/elastic"
+	"github.com/comeonjy/util/log"
 	mqttx "github.com/comeonjy/util/mqtt"
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"github.com/sirupsen/logrus"
@@ -14,6 +16,8 @@ import (
 )
 
 func TestSubscribe(t *testing.T) {
+	elastic.Init(config.GetConfig().Elastic)
+	log.Init(config.GetConfig().Log)
 	mqttx.Init(config.GetConfig().Mqtt)
 
 	defer mqttx.Close()
@@ -26,7 +30,7 @@ func TestSubscribe(t *testing.T) {
 		t.Error(err)
 	}
 
-	time.Sleep(10 * time.Second)
+	time.Sleep(5 * time.Second)
 }
 
 func onMessage(client mqtt.Client, msg mqtt.Message) {

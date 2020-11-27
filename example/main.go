@@ -6,6 +6,7 @@ package main
 import (
 	"encoding/json"
 	"github.com/comeonjy/util/elastic"
+	"github.com/comeonjy/util/email"
 	"github.com/comeonjy/util/log"
 	"net/http"
 	"time"
@@ -26,6 +27,7 @@ import (
 
 func init() {
 	config.LoadConfig()
+	email.Init(config.GetConfig().Email)
 	elastic.Init(config.GetConfig().Elastic)
 	log.Init(config.GetConfig().Log)
 	mysql.Init(config.GetConfig().Mysql)
@@ -33,7 +35,9 @@ func init() {
 }
 
 func main() {
-	r := gin.Default()
+	r := gin.New()
+	r.Use(middlewares.Recovery())
+	r.Use(middlewares.LoggerToLogrus())
 	r.GET("", func(ctx *gin.Context) {
 		logrus.Info("sleep...start")
 		//time.Sleep(4 * time.Second)

@@ -10,6 +10,8 @@ http_port: 8080
 log:
   format: json
   hook: elasticsearch
+  level: info
+  report_caller: true
 
 # 数据库配置
 mysql:
