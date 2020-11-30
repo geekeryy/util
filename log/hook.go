@@ -39,14 +39,23 @@ func (hook *EsHook) Fire(entry *logrus.Entry) error {
 // EmailHook
 type EmailHook struct{
 	MailTo []string
+	Level string
 }
 
 func (hook *EmailHook) Levels() []logrus.Level {
-	return []logrus.Level{
-		logrus.ErrorLevel,
+	arr:=make([]logrus.Level,0)
+	level,_:=logrus.ParseLevel(hook.Level)
+	for _,v:=range logrus.AllLevels{
+		if v<=level {
+			arr=append(arr, v)
+		}
 	}
+	return arr
 }
 func (hook *EmailHook) Fire(entry *logrus.Entry) error {
+	if entry.Caller != nil {
+		entry.WithField("caller",fmt.Sprintf("%s:%d", entry.Caller.File, entry.Caller.Line))
+	}
 	body,err:=entry.String()
 	if err != nil {
 		return err

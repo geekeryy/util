@@ -9,12 +9,13 @@ http_port: 8080
 # 日志配置
 log:
   format: json
-  hooks:
+  hooks:              # 启用的Hook列表
     - elasticsearch
     - email
-  emails:
+  emails:             # 邮件警报接收者
     - 1********8@qq.com
-  level: info
+  level: info         # 日志记录等级
+  email_level: error  # 邮件警报等级
   report_caller: true
 
 # 数据库配置

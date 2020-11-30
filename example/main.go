@@ -12,7 +12,6 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 
 	"github.com/comeonjy/util/config"
@@ -39,9 +38,6 @@ func main() {
 	r.Use(middlewares.Recovery())
 	r.Use(middlewares.LoggerToLogrus())
 	r.GET("", func(ctx *gin.Context) {
-		logrus.Info("sleep...start")
-		//time.Sleep(4 * time.Second)
-		logrus.Info("sleep...end")
 		ctx.JSON(http.StatusOK, gin.H{"msg": "ok"})
 	})
 

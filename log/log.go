@@ -29,6 +29,7 @@ type Config struct {
 	Hooks        []string `json:"hooks" yaml:"hooks"`
 	Emails       []string `json:"emails" yaml:"emails"`
 	Mobile       string   `json:"mobile" yaml:"mobile"`
+	EmailLevel   string   `json:"email_level" yaml:"email_level" mapstructure:"email_level"`
 	ReportCaller bool     `json:"report_caller" yaml:"report_caller" mapstructure:"report_caller"`
 }
 
@@ -55,7 +56,7 @@ func Init(cfg Config) {
 			}
 		case "email":
 			if email.Conn() != nil {
-				logrus.AddHook(&EmailHook{MailTo: cfg.Emails})
+				logrus.AddHook(&EmailHook{MailTo: cfg.Emails,Level: cfg.EmailLevel})
 				logrus.Info("日志Hook添加成功：", hook)
 			} else {
 				logrus.Error("email 未初始化 hook未生效")
