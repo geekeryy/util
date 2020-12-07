@@ -3,6 +3,7 @@ module github.com/comeonjy/util
 go 1.15
 
 require (
+	github.com/360EntSecGroup-Skylar/excelize/v2 v2.0.0
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/eclipse/paho.mqtt.golang v1.2.0
 	github.com/elastic/go-elasticsearch/v8 v8.0.0-20201104130540-2e1f801663c6
