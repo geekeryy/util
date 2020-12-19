@@ -18,11 +18,12 @@ package mysql
 import (
 	"fmt"
 	"sync"
+	"time"
 
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
 )
 
 var (
@@ -56,21 +57,21 @@ func Init(mysqlConfig Config) {
 			mysqlConfig.Dbname,
 		)
 
-		conn, err := gorm.Open("mysql", dsn)
+		conn, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 		if err != nil {
 			logrus.Fatalf("mysql connect failed: %v", err)
 		}
 
-		conn.DB().SetMaxIdleConns(mysqlConfig.MaxIdleConn)
-		conn.DB().SetMaxOpenConns(mysqlConfig.MaxOpenConn)
-
-		conn.LogMode(mysqlConfig.Debug)
-
-		if err = conn.DB().Ping(); err != nil {
-			logrus.Fatalf("database heartbeat failed: %v", err)
+		sqlDB, err := conn.DB()
+		if err != nil {
+			logrus.Fatalf("mysql connPool failed: %v", err)
 		}
+		sqlDB.SetMaxIdleConns(mysqlConfig.MaxIdleConn)
+		sqlDB.SetMaxOpenConns(mysqlConfig.MaxOpenConn)
+		sqlDB.SetConnMaxLifetime(time.Hour)
+
 		db = conn
-		logrus.Info("mysql connect successfully")
+  		logrus.Info("mysql connect successfully")
 	})
 }
 
@@ -82,7 +83,11 @@ func Conn() *gorm.DB {
 // Close method
 func Close() error {
 	if db != nil {
-		if err := db.Close(); err != nil {
+		sqlDB, err := db.DB()
+		if err != nil {
+			return errors.WithStack(err)
+		}
+		if err := sqlDB.Close(); err != nil {
 			return errors.WithStack(err)
 		}
 	}

@@ -15,7 +15,6 @@ import (
 func TestMysql(t *testing.T) {
 	mysql.Init(config.LoadConfig().Mysql)
 
-
 	db := mysql.Conn()
 	defer mysql.Close()
 
