@@ -21,3 +21,4 @@
 - [x] elastic elasticsearch 
 - [ ] kafka
 - [ ] grpc
+- [ ] 聚合短信

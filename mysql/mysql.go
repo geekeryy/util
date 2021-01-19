@@ -17,6 +17,7 @@ package mysql
 
 import (
 	"fmt"
+	"gorm.io/gorm/logger"
 	"sync"
 	"time"
 
@@ -57,7 +58,15 @@ func Init(mysqlConfig Config) {
 			mysqlConfig.Dbname,
 		)
 
-		conn, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+		conn, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
+			Logger: logger.New(
+				logrus.StandardLogger(),
+				logger.Config{
+					SlowThreshold: time.Second,
+				},
+			),
+		})
+
 		if err != nil {
 			logrus.Fatalf("mysql connect failed: %v", err)
 		}
@@ -71,7 +80,7 @@ func Init(mysqlConfig Config) {
 		sqlDB.SetConnMaxLifetime(time.Hour)
 
 		db = conn
-  		logrus.Info("mysql connect successfully")
+		logrus.Info("mysql connect successfully")
 	})
 }
 

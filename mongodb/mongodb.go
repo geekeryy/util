@@ -29,7 +29,7 @@ var (
 	once     sync.Once
 )
 
-func GetConn(collectionName string) *mongo.Collection {
+func Conn(collectionName string) *mongo.Collection {
 	return database.Collection(collectionName)
 }
 

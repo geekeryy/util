@@ -25,7 +25,7 @@ type user struct {
 
 func TestGetConn(t *testing.T) {
 	u:=user{}
-	err:=mongodb.GetConn("user").FindOne(context.Background(),bson.M{}).Decode(&u)
+	err:=mongodb.Conn("user").FindOne(context.Background(),bson.M{}).Decode(&u)
 	logrus.Info(err,u)
 }
 
@@ -37,7 +37,7 @@ func TestGetConn2(t *testing.T) {
 		go func() {
 
 			for i := 0; i < 1; i++ {
-				if err:=mongodb.GetConn("user").FindOne(context.Background(),bson.M{}).Decode(&u);err!=nil{
+				if err:=mongodb.Conn("user").FindOne(context.Background(),bson.M{}).Decode(&u);err!=nil{
 					t.Fatal(err)
 				}
 			}
@@ -52,7 +52,7 @@ func TestGetConn2(t *testing.T) {
 func BenchmarkGetConn(b *testing.B) {
 	u:=user{}
 	for i := 0; i < b.N*10; i++ {
-		if err:=mongodb.GetConn("user").FindOne(context.Background(),bson.M{}).Decode(&u);err!=nil{
+		if err:=mongodb.Conn("user").FindOne(context.Background(),bson.M{}).Decode(&u);err!=nil{
 			b.Fatal(err)
 		}
 	}

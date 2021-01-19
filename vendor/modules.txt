@@ -141,6 +141,8 @@ github.com/spf13/viper
 github.com/streadway/amqp
 # github.com/subosito/gotenv v1.2.0
 github.com/subosito/gotenv
+# github.com/tencentcloud/tencentcloud-sdk-go v1.0.80
+## explicit
 # github.com/ugorji/go/codec v1.1.7
 github.com/ugorji/go/codec
 # github.com/xdg/scram v0.0.0-20180814205039-7eeb5667e42c
