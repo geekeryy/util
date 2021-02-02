@@ -1,6 +1,11 @@
 # github.com/360EntSecGroup-Skylar/excelize/v2 v2.0.0
 ## explicit
 github.com/360EntSecGroup-Skylar/excelize/v2
+# github.com/PuerkitoBio/goquery v1.6.1
+## explicit
+github.com/PuerkitoBio/goquery
+# github.com/andybalholm/cascadia v1.1.0
+github.com/andybalholm/cascadia
 # github.com/aws/aws-sdk-go v1.34.28
 github.com/aws/aws-sdk-go/aws
 github.com/aws/aws-sdk-go/aws/awserr
@@ -111,6 +116,8 @@ github.com/leodido/go-urn
 github.com/magiconair/properties
 # github.com/mattn/go-isatty v0.0.12
 github.com/mattn/go-isatty
+# github.com/mattn/go-sqlite3 v1.14.5
+## explicit
 # github.com/mitchellh/mapstructure v1.1.2
 github.com/mitchellh/mapstructure
 # github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd
@@ -144,8 +151,6 @@ github.com/spf13/viper
 github.com/streadway/amqp
 # github.com/subosito/gotenv v1.2.0
 github.com/subosito/gotenv
-# github.com/tencentcloud/tencentcloud-sdk-go v1.0.80
-## explicit
 # github.com/ugorji/go/codec v1.1.7
 github.com/ugorji/go/codec
 # github.com/xdg/scram v0.0.0-20180814205039-7eeb5667e42c
@@ -203,6 +208,8 @@ go.opentelemetry.io/otel/unit
 golang.org/x/crypto/ocsp
 golang.org/x/crypto/pbkdf2
 # golang.org/x/net v0.0.0-20201006153459-a7d1128ccaa0
+golang.org/x/net/html
+golang.org/x/net/html/atom
 golang.org/x/net/internal/socks
 golang.org/x/net/proxy
 golang.org/x/net/websocket
@@ -257,8 +264,6 @@ gopkg.in/yaml.v2
 # gorm.io/driver/mysql v1.0.3
 ## explicit
 gorm.io/driver/mysql
-# gorm.io/driver/sqlite v1.1.4
-## explicit
 # gorm.io/gorm v1.20.8
 ## explicit
 gorm.io/gorm

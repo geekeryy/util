@@ -87,7 +87,7 @@ func (e *Excel) Create(data interface{}) error {
 	return e.file.SaveAs(e.FileName)
 }
 
-// 读取Excel
+// 读取Excel 第一行为表头
 // data: []struct
 func (e *Excel) Read(data interface{}) error {
 	file, err := excelize.OpenFile(e.FileName)
