@@ -1,4 +1,4 @@
-// @Description  TODO
+// @Description  TODO 不够好
 // @Author  	 jiangyang  
 // @Created  	 2020/12/7 11:10 上午
 package excle
@@ -184,6 +184,7 @@ func (e *Excel) Read(data interface{}) error {
 
 // 保存到excel
 // data: Struct,Slice,Ptr{Struct,Slice}
+// x,y: 偏移量
 func (e *Excel) store(data interface{}, x, y int) error {
 	v := reflect.ValueOf(data)
 	t := reflect.TypeOf(data)

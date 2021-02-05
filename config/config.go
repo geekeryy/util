@@ -6,6 +6,7 @@ package config
 import (
 	"github.com/comeonjy/util/elastic"
 	"github.com/comeonjy/util/rabbitmq"
+	"github.com/comeonjy/util/tencent/tencent_cos"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 
@@ -22,15 +23,16 @@ var c *Config
 
 // 配置结构体
 type Config struct {
-	Mysql    mysql.Config    `mapstructure:"mysql"`
-	Log      log.Config      `mapstructure:"log"`
-	Mongodb  mongodb.Config  `mapstructure:"mongodb"`
-	Redis    redis.Config    `mapstructure:"redis"`
-	Email    email.Config    `mapstructure:"email"`
-	Rbac     rbac.Config     `mapstructure:"rbac"`
-	Mqtt     mqtt.Config     `mapstructure:"mqtt"`
-	Rabbitmq rabbitmq.Config `mapstructure:"rabbitmq"`
-	Elastic  elastic.Config  `mapstructure:"elastic"`
+	Mysql      mysql.Config       `mapstructure:"mysql"`
+	Log        log.Config         `mapstructure:"log"`
+	Mongodb    mongodb.Config     `mapstructure:"mongodb"`
+	Redis      redis.Config       `mapstructure:"redis"`
+	Email      email.Config       `mapstructure:"email"`
+	Rbac       rbac.Config        `mapstructure:"rbac"`
+	Mqtt       mqtt.Config        `mapstructure:"mqtt"`
+	Rabbitmq   rabbitmq.Config    `mapstructure:"rabbitmq"`
+	Elastic    elastic.Config     `mapstructure:"elastic"`
+	TencentCos tencent_cos.Config `mapstructure:"cos"`
 }
 
 // 获取配置信息
@@ -52,6 +54,7 @@ func LoadConfig(cfgFile ...string) *Config {
 		viper.SetConfigType("yaml")
 		viper.AddConfigPath(".")
 		viper.AddConfigPath("./../")
+		viper.AddConfigPath("./../../")
 	}
 	if err := viper.ReadInConfig(); err != nil {
 		logrus.Fatal(err)

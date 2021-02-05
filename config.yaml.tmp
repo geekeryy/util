@@ -1,5 +1,8 @@
 # 默认配置文件
 
+# 应用环境
+app_env: dev
+
 # http服务模式(debug,release,test)
 mode: debug
 
@@ -65,3 +68,9 @@ rabbitmq:
 
 elastic:
   address: http://localhost:9200
+
+cos:
+  bucket_url:
+  secret_id:
+  secret_key:
+  cdn:
