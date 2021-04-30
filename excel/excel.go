@@ -1,15 +1,21 @@
+// Package excel
 // @Description  TODO 不够好
 // @Author  	 jiangyang  
 // @Created  	 2020/12/7 11:10 上午
-package excle
+package excel
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/360EntSecGroup-Skylar/excelize/v2"
 	"github.com/pkg/errors"
 	"os"
 	"reflect"
 	"strconv"
+)
+
+const (
+	StructTag = "excel"
 )
 
 type Excel struct {
@@ -25,7 +31,7 @@ func New(fileName string, sheetName string) *Excel {
 	}
 }
 
-// 保存
+// Save 保存
 func (e *Excel) Save(data interface{}) error {
 	_, err := os.Stat(e.FileName)
 	if err != nil {
@@ -36,7 +42,12 @@ func (e *Excel) Save(data interface{}) error {
 	return e.Insert(data)
 }
 
-// 编辑Excel
+func (e *Excel) Check() error {
+
+	return nil
+}
+
+// Insert 编辑Excel
 func (e *Excel) Insert(data interface{}) error {
 	file, err := excelize.OpenFile(e.FileName)
 	if err != nil {
@@ -63,7 +74,7 @@ func (e *Excel) Insert(data interface{}) error {
 	return e.file.Save()
 }
 
-// 创建Excel (覆盖原文件)
+// Create 创建Excel (覆盖原文件)
 func (e *Excel) Create(data interface{}) error {
 	e.file = excelize.NewFile()
 
@@ -90,15 +101,7 @@ func (e *Excel) Create(data interface{}) error {
 // 读取Excel 第一行为表头
 // data: []struct
 func (e *Excel) Read(data interface{}) error {
-	file, err := excelize.OpenFile(e.FileName)
-	if err != nil {
-		return err
-	}
-	e.file = file
-	rows, err := e.file.GetRows(e.SheetName)
-	if err != nil {
-		return err
-	}
+	var err error
 
 	v := reflect.ValueOf(data)
 	t := reflect.TypeOf(data)
@@ -108,6 +111,35 @@ func (e *Excel) Read(data interface{}) error {
 		v = v.Elem()
 	}
 
+	if e.file, err = excelize.OpenFile(e.FileName); err != nil {
+		return err
+	}
+
+	rows, err := e.file.GetRows(e.SheetName)
+	if err != nil {
+		return err
+	}
+
+	if t.Elem().NumField() < len(rows[0]) {
+		return errors.New("invalid data can not match field num")
+	}
+
+	x := 0
+	for i, rowTag := range rows[0] {
+		var tag string
+		for ; i+x < t.Elem().NumField(); x++ {
+			tag = t.Elem().Field(i + x).Tag.Get(StructTag)
+			if tag != "-" {
+				if tag != rowTag {
+					return errors.New("field " + tag + " not find")
+				} else {
+					break
+				}
+			}
+
+		}
+	}
+
 	if t.Kind() != reflect.Slice {
 		return errors.New("can not analysis the type of " + t.Kind().String())
 	}
@@ -115,69 +147,51 @@ func (e *Excel) Read(data interface{}) error {
 	s := reflect.MakeSlice(t, len(rows)-1, len(rows)-1)
 
 	for i, row := range rows[1:] {
+		index := 0
 		for k, cell := range row {
-			switch s.Index(i).Field(k).Type().Kind() {
-			case reflect.Int:
-				in, err := strconv.Atoi(cell)
-				if err == nil {
-					s.Index(i).Field(k).Set(reflect.ValueOf(in))
+			if t.Kind() == reflect.Slice {
+				t = t.Elem()
+			}
+
+			for ; k+index < t.NumField(); index++ {
+				if t.Field(k+index).Tag.Get(StructTag) != "-" {
+					break
 				}
-			case reflect.Uint:
-				in, err := strconv.Atoi(cell)
+			}
+			if k+index >= t.NumField() {
+				break
+			}
+
+			field := s.Index(i).Field(k + index)
+			switch field.Type().Kind() {
+			case reflect.Bool:
+				field.SetBool(cell == "true" || cell == "1" || cell == "是")
+			case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+				in, err := strconv.ParseInt(cell, 10, 64)
 				if err == nil {
-					s.Index(i).Field(k).Set(reflect.ValueOf(uint(in)))
+					field.SetInt(in)
 				}
-			case reflect.Uint16:
-				in, err := strconv.Atoi(cell)
+			case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+				in, err := strconv.ParseUint(cell, 10, 64)
 				if err == nil {
-					s.Index(i).Field(k).Set(reflect.ValueOf(uint16(in)))
-				}
-			case reflect.Uint32:
-				in, err := strconv.Atoi(cell)
-				if err == nil {
-					s.Index(i).Field(k).Set(reflect.ValueOf(uint32(in)))
-				}
-			case reflect.Uint64:
-				in, err := strconv.Atoi(cell)
-				if err == nil {
-					s.Index(i).Field(k).Set(reflect.ValueOf(uint64(in)))
-				}
-			case reflect.Int8:
-				in, err := strconv.Atoi(cell)
-				if err == nil {
-					s.Index(i).Field(k).Set(reflect.ValueOf(int8(in)))
-				}
-			case reflect.Int16:
-				in, err := strconv.Atoi(cell)
-				if err == nil {
-					s.Index(i).Field(k).Set(reflect.ValueOf(int16(in)))
-				}
-			case reflect.Int32:
-				in, err := strconv.Atoi(cell)
-				if err == nil {
-					s.Index(i).Field(k).Set(reflect.ValueOf(int32(in)))
-				}
-			case reflect.Int64:
-				in, err := strconv.Atoi(cell)
-				if err == nil {
-					s.Index(i).Field(k).Set(reflect.ValueOf(int64(in)))
+					field.SetUint(in)
 				}
 			case reflect.String:
-				s.Index(i).Field(k).SetString(cell)
-			case reflect.Bool:
-				s.Index(i).Field(k).SetBool(cell == "true")
+				field.SetString(cell)
 			case reflect.Float32, reflect.Float64:
 				float, err := strconv.ParseFloat(cell, 64)
 				if err == nil {
-					s.Index(i).Field(k).SetFloat(float)
+					field.SetFloat(float)
 				}
+			default:
+				return errors.New(fmt.Sprintf("not supported kind of %s", field.Type().Kind()))
 			}
 
 		}
 	}
 
-	marshal, err := json.Marshal(s.Interface())
-	json.Unmarshal(marshal, data)
+	marshal, _ := json.Marshal(s.Interface())
+	_ = json.Unmarshal(marshal, data)
 
 	return nil
 }
@@ -186,15 +200,14 @@ func (e *Excel) Read(data interface{}) error {
 // data: Struct,Slice,Ptr{Struct,Slice}
 // x,y: 偏移量
 func (e *Excel) store(data interface{}, x, y int) error {
-	v := reflect.ValueOf(data)
 	t := reflect.TypeOf(data)
 	switch t.Kind() {
 	case reflect.Struct:
-		if err := e.setStruct(v, x, y); err != nil {
+		if err := e.setStruct(data, x, y); err != nil {
 			return err
 		}
 	case reflect.Slice:
-		if err := e.setSlice(v, x, y); err != nil {
+		if err := e.setSlice(data, x, y); err != nil {
 			return err
 		}
 	default:
@@ -209,19 +222,13 @@ func (e *Excel) setTitle(t reflect.Type, x, y int) error {
 	if t.Kind() == reflect.Slice || t.Kind() == reflect.Ptr {
 		t = t.Elem()
 	}
-	for i := 0; i < t.NumField(); i++ {
-		if err := e.file.SetCellStr(e.SheetName, Axis(i+1+x, 1+y), t.Field(i).Name); err != nil {
-			return err
-		}
-	}
-	return nil
-}
 
-// 设置切片类型值
-func (e *Excel) setSlice(v reflect.Value, x, y int) error {
-	for j := 0; j < v.Len(); j++ {
-		for i := 0; i < v.Index(j).NumField(); i++ {
-			if err := e.file.SetCellValue(e.SheetName, Axis(i+1+x, j+y+2), v.Index(j).Field(i).Interface()); err != nil {
+	for i := 0; i < t.NumField(); i++ {
+		tag := t.Field(i).Tag.Get(StructTag)
+		if tag == "-" {
+			x--
+		} else {
+			if err := e.file.SetCellStr(e.SheetName, Axis(i+1+x, 1+y), tag); err != nil {
 				return err
 			}
 		}
@@ -229,11 +236,36 @@ func (e *Excel) setSlice(v reflect.Value, x, y int) error {
 	return nil
 }
 
+// 设置切片类型值
+func (e *Excel) setSlice(data interface{}, x, y int) error {
+	v := reflect.ValueOf(data)
+	t := reflect.TypeOf(data)
+	for j := 0; j < v.Len(); j++ {
+		index := 0
+		for i := 0; i < v.Index(j).NumField(); i++ {
+			if t.Elem().Field(i).Tag.Get(StructTag) == "-" {
+				index--
+			} else {
+				if err := e.file.SetCellValue(e.SheetName, Axis(i+1+x+index, j+y+2), v.Index(j).Field(i).Interface()); err != nil {
+					return err
+				}
+			}
+		}
+	}
+	return nil
+}
+
 // 保存结构体类型值
-func (e *Excel) setStruct(v reflect.Value, x, y int) error {
+func (e *Excel) setStruct(data interface{}, x, y int) error {
+	v := reflect.ValueOf(data)
+	t := reflect.TypeOf(data)
 	for i := 0; i < v.NumField(); i++ {
-		if err := e.file.SetCellValue(e.SheetName, Axis(i+1+x, 2+y), v.Field(i).Interface()); err != nil {
-			return err
+		if t.Field(i).Tag.Get(StructTag) == "-" {
+			x--
+		} else {
+			if err := e.file.SetCellValue(e.SheetName, Axis(i+1+x, 2+y), v.Field(i).Interface()); err != nil {
+				return err
+			}
 		}
 	}
 	return nil
