@@ -40,7 +40,21 @@ func NewClient(cfg Config) *TencentCos {
 
 }
 
-func (t *TencentCos) Insert() {
+func (t *TencentCos) Get(prefix string) error {
+	opt := &cos.BucketGetOptions{
+		Prefix:  prefix,
+		MaxKeys: 1000,
+	}
+	res, _, err := t.Bucket.Get(context.Background(), opt)
+	if err != nil {
+		return err
+	}
+	fmt.Println(res)
+	return nil
+}
+
+// 写入生命周期 (临时)
+func (t *TencentCos) InsertLifecycle() {
 
 	lifecycle, _, err := t.Bucket.GetLifecycle(context.Background())
 	fmt.Println(lifecycle, err)
@@ -67,7 +81,8 @@ func (t *TencentCos) Insert() {
 	fmt.Println(putLifecycle, err)
 }
 
-func (t *TencentCos) Delete() {
+// 删除生命周期 (临时)
+func (t *TencentCos) DeleteLifecycle() {
 	lifecycle, _, err := t.Bucket.GetLifecycle(context.Background())
 	if err != nil {
 		return
