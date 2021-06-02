@@ -5,6 +5,7 @@ package test_test
 
 import (
 	"fmt"
+	"regexp"
 	"testing"
 )
 
@@ -19,5 +20,10 @@ func foo() (a int) {
 }
 
 func TestDemo(t *testing.T)  {
-	fmt.Println(foo())
+	re, err:= regexp.Compile(".*网申.*")
+	if err!=nil{
+		t.Error(err)
+	}
+	fmt.Println(re.MatchString("qwe网1申wqe"))
+
 }

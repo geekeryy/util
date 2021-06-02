@@ -7,11 +7,12 @@ package excel
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/360EntSecGroup-Skylar/excelize/v2"
-	"github.com/pkg/errors"
 	"os"
 	"reflect"
 	"strconv"
+
+	"github.com/360EntSecGroup-Skylar/excelize/v2"
+	"github.com/pkg/errors"
 )
 
 const (
@@ -19,21 +20,45 @@ const (
 )
 
 type Excel struct {
-	FileName  string
-	SheetName string
-	file      *excelize.File
+	file *excelize.File
+	excelOption
 }
 
-func New(fileName string, sheetName string) *Excel {
+type excelOption struct {
+	fileName  string
+	sheetName string
+	titles    []string
+}
+
+func TitleOption(titles ...string) *titleOpt {
+	return &titleOpt{titles: titles}
+}
+
+func FileNameOption(fileName string) *fileNameOpt {
+	return &fileNameOpt{fileName: fileName}
+}
+
+func SheetNameOption(sheetName string) *sheetNameOpt {
+	return &sheetNameOpt{sheetName: sheetName}
+}
+
+func New(options ...Option) *Excel {
+	opt := defaultOption
+	for _, v := range options {
+		v.apply(opt)
+	}
+	if len(opt.sheetName)==0{
+		
+	}
 	return &Excel{
-		FileName:  fileName,
-		SheetName: sheetName,
+		file:        nil,
+		excelOption: opt,
 	}
 }
 
 // Save 保存
 func (e *Excel) Save(data interface{}) error {
-	_, err := os.Stat(e.FileName)
+	_, err := os.Stat(e.fileName)
 	if err != nil {
 		if os.IsNotExist(err) {
 			return e.Create(data)
@@ -43,19 +68,18 @@ func (e *Excel) Save(data interface{}) error {
 }
 
 func (e *Excel) Check() error {
-
 	return nil
 }
 
 // Insert 编辑Excel
 func (e *Excel) Insert(data interface{}) error {
-	file, err := excelize.OpenFile(e.FileName)
+	file, err := excelize.OpenFile(e.fileName)
 	if err != nil {
 		return err
 	}
 	e.file = file
 
-	rows, err := e.file.GetRows(e.SheetName)
+	rows, err := e.file.GetRows(e.sheetName)
 	if err != nil {
 		return err
 	}
@@ -85,7 +109,7 @@ func (e *Excel) Create(data interface{}) error {
 		v = v.Elem()
 	}
 
-	e.file.NewSheet(e.SheetName)
+	e.file.NewSheet(e.sheetName)
 
 	if err := e.setTitle(t, 0, 0); err != nil {
 		return err
@@ -95,7 +119,7 @@ func (e *Excel) Create(data interface{}) error {
 		return err
 	}
 
-	return e.file.SaveAs(e.FileName)
+	return e.file.SaveAs(e.fileName)
 }
 
 // 读取Excel 第一行为表头
@@ -111,11 +135,11 @@ func (e *Excel) Read(data interface{}) error {
 		v = v.Elem()
 	}
 
-	if e.file, err = excelize.OpenFile(e.FileName); err != nil {
+	if e.file, err = excelize.OpenFile(e.fileName); err != nil {
 		return err
 	}
 
-	rows, err := e.file.GetRows(e.SheetName)
+	rows, err := e.file.GetRows(e.sheetName)
 	if err != nil {
 		return err
 	}
@@ -228,7 +252,7 @@ func (e *Excel) setTitle(t reflect.Type, x, y int) error {
 		if tag == "-" {
 			x--
 		} else {
-			if err := e.file.SetCellStr(e.SheetName, Axis(i+1+x, 1+y), tag); err != nil {
+			if err := e.file.SetCellStr(e.sheetName, Axis(i+1+x, 1+y), tag); err != nil {
 				return err
 			}
 		}
@@ -246,7 +270,7 @@ func (e *Excel) setSlice(data interface{}, x, y int) error {
 			if t.Elem().Field(i).Tag.Get(StructTag) == "-" {
 				index--
 			} else {
-				if err := e.file.SetCellValue(e.SheetName, Axis(i+1+x+index, j+y+2), v.Index(j).Field(i).Interface()); err != nil {
+				if err := e.file.SetCellValue(e.sheetName, Axis(i+1+x+index, j+y+2), v.Index(j).Field(i).Interface()); err != nil {
 					return err
 				}
 			}
@@ -263,7 +287,7 @@ func (e *Excel) setStruct(data interface{}, x, y int) error {
 		if t.Field(i).Tag.Get(StructTag) == "-" {
 			x--
 		} else {
-			if err := e.file.SetCellValue(e.SheetName, Axis(i+1+x, 2+y), v.Field(i).Interface()); err != nil {
+			if err := e.file.SetCellValue(e.sheetName, Axis(i+1+x, 2+y), v.Field(i).Interface()); err != nil {
 				return err
 			}
 		}

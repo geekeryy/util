@@ -1,8 +1,6 @@
 # github.com/360EntSecGroup-Skylar/excelize/v2 v2.0.0
 ## explicit
 github.com/360EntSecGroup-Skylar/excelize/v2
-# github.com/PuerkitoBio/goquery v1.6.1
-## explicit
 # github.com/aws/aws-sdk-go v1.34.28
 github.com/aws/aws-sdk-go/aws
 github.com/aws/aws-sdk-go/aws/awserr
@@ -89,9 +87,6 @@ github.com/hashicorp/hcl/hcl/token
 github.com/hashicorp/hcl/json/parser
 github.com/hashicorp/hcl/json/scanner
 github.com/hashicorp/hcl/json/token
-# github.com/imroc/req v0.3.0
-## explicit
-github.com/imroc/req
 # github.com/jinzhu/gorm v1.9.16
 ## explicit
 github.com/jinzhu/gorm

@@ -5,8 +5,9 @@ package excel_test
 
 import (
 	"fmt"
-	"github.com/comeonjy/util/excel"
 	"testing"
+
+	"github.com/comeonjy/util/excel"
 )
 
 type DemoModel struct {
@@ -26,29 +27,31 @@ func TestSave(t *testing.T) {
 	demos := make([]DemoModel, 0)
 	demos = append(demos, *demo, *demo)
 	t.Run("create", func(t *testing.T) {
-		if err := excel.New("./1.xlsx", "Sheet1").Create(demo); err != nil {
+		if err := excel.New(excel.FileNameOption("./1.xlsx"), excel.SheetNameOption("Sheet1")).Create(demos); err != nil {
 			t.Error(err)
 		}
 	})
 
 	t.Run("insert struct", func(t *testing.T) {
-		if err := excel.New("./1.xlsx", "Sheet1").Insert(demo); err != nil {
+		if err := excel.New(excel.FileNameOption("./1.xlsx"), excel.SheetNameOption("Sheet1")).Insert(demo); err != nil {
 			t.Error(err)
 		}
 	})
 
 	t.Run("insert slice", func(t *testing.T) {
-		if err := excel.New("./1.xlsx", "Sheet1").Insert(demos); err != nil {
+		if err := excel.New(excel.FileNameOption("./1.xlsx"), excel.SheetNameOption("Sheet1")).Insert(demos); err != nil {
 			t.Error(err)
 		}
 	})
 
 	t.Run("read", func(t *testing.T) {
 		s := make([]DemoModel, 0)
-		if err := excel.New("./1.xlsx", "Sheet1").Read(&s); err != nil {
+		if err := excel.New(excel.FileNameOption("./1.xlsx"), excel.SheetNameOption("Sheet1")).Read(&s); err != nil {
 			t.Error(err)
 		} else {
-			fmt.Printf("%+v", s[0])
+			for _,v:=range s{
+				fmt.Println(v)
+			}
 		}
 	})
 

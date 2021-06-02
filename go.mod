@@ -4,14 +4,12 @@ go 1.15
 
 require (
 	github.com/360EntSecGroup-Skylar/excelize/v2 v2.0.0
-	github.com/PuerkitoBio/goquery v1.6.1 // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/eclipse/paho.mqtt.golang v1.2.0
 	github.com/elastic/go-elasticsearch/v8 v8.0.0-20201104130540-2e1f801663c6
 	github.com/gin-contrib/pprof v1.3.0
 	github.com/gin-gonic/gin v1.6.3
 	github.com/go-redis/redis/v8 v8.3.3
-	github.com/imroc/req v0.3.0
 	github.com/jinzhu/gorm v1.9.16
 	github.com/mattn/go-sqlite3 v1.14.5 // indirect
 	github.com/mozillazg/go-httpheader v0.3.0 // indirect
