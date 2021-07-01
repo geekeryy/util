@@ -21,10 +21,10 @@ const (
 
 type Excel struct {
 	file *excelize.File
-	excelOption
+	ExcelOption
 }
 
-type excelOption struct {
+type ExcelOption struct {
 	fileName  string
 	sheetName string
 	titles    []string
@@ -45,14 +45,14 @@ func SheetNameOption(sheetName string) *sheetNameOpt {
 func New(options ...Option) *Excel {
 	opt := defaultOption
 	for _, v := range options {
-		v.apply(opt)
+		v.apply(&opt)
 	}
-	if len(opt.sheetName)==0{
-		
+	if len(opt.sheetName) == 0 {
+		opt.sheetName = "Sheet1"
 	}
 	return &Excel{
 		file:        nil,
-		excelOption: opt,
+		ExcelOption: opt,
 	}
 }
 
@@ -144,15 +144,16 @@ func (e *Excel) Read(data interface{}) error {
 		return err
 	}
 
-	if t.Elem().NumField() < len(rows[0]) {
+	filedNum := GetStructType(t).NumField()
+	if filedNum < len(rows[0]) {
 		return errors.New("invalid data can not match field num")
 	}
 
 	x := 0
 	for i, rowTag := range rows[0] {
 		var tag string
-		for ; i+x < t.Elem().NumField(); x++ {
-			tag = t.Elem().Field(i + x).Tag.Get(StructTag)
+		for ; i+x < filedNum; x++ {
+			tag = GetStructType(t).Field(i + x).Tag.Get(StructTag)
 			if tag != "-" {
 				if tag != rowTag {
 					return errors.New("field " + tag + " not find")
@@ -173,16 +174,12 @@ func (e *Excel) Read(data interface{}) error {
 	for i, row := range rows[1:] {
 		index := 0
 		for k, cell := range row {
-			if t.Kind() == reflect.Slice {
-				t = t.Elem()
-			}
-
-			for ; k+index < t.NumField(); index++ {
-				if t.Field(k+index).Tag.Get(StructTag) != "-" {
+			for ; k+index < filedNum; index++ {
+				if GetStructType(t).Field(k+index).Tag.Get(StructTag) != "-" {
 					break
 				}
 			}
-			if k+index >= t.NumField() {
+			if k+index >= filedNum {
 				break
 			}
 
@@ -260,17 +257,33 @@ func (e *Excel) setTitle(t reflect.Type, x, y int) error {
 	return nil
 }
 
+func GetStructType(t reflect.Type) reflect.Type {
+	for {
+		if t.Kind() == reflect.Ptr || t.Kind() == reflect.Slice {
+			t = t.Elem()
+			continue
+		}
+		break
+	}
+	return t
+}
+
 // 设置切片类型值
 func (e *Excel) setSlice(data interface{}, x, y int) error {
 	v := reflect.ValueOf(data)
-	t := reflect.TypeOf(data)
+	t := GetStructType(reflect.TypeOf(data))
+
 	for j := 0; j < v.Len(); j++ {
 		index := 0
-		for i := 0; i < v.Index(j).NumField(); i++ {
-			if t.Elem().Field(i).Tag.Get(StructTag) == "-" {
+		vJ := v.Index(j)
+		if vJ.Kind() == reflect.Ptr {
+			vJ = vJ.Elem()
+		}
+		for i := 0; i < vJ.NumField(); i++ {
+			if t.Field(i).Tag.Get(StructTag) == "-" {
 				index--
 			} else {
-				if err := e.file.SetCellValue(e.sheetName, Axis(i+1+x+index, j+y+2), v.Index(j).Field(i).Interface()); err != nil {
+				if err := e.file.SetCellValue(e.sheetName, Axis(i+1+x+index, j+y+2), vJ.Field(i).Interface()); err != nil {
 					return err
 				}
 			}

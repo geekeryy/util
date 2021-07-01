@@ -3,7 +3,11 @@
 // @Created  	 2020/11/17 3:32 下午
 package tool
 
-import "encoding/json"
+import (
+	"crypto/md5"
+	"encoding/hex"
+	"encoding/json"
+)
 
 // 解析src interface中的数据到dst pointer中
 // 适用于无法断言的场景
@@ -17,4 +21,10 @@ func InterfaceToPointer(dst interface{}, src interface{}) error {
 		return err
 	}
 	return nil
+}
+
+func MD5(src string) string {
+	h := md5.New()
+	h.Write([]byte(src))
+	return hex.EncodeToString(h.Sum(nil))
 }

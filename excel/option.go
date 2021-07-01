@@ -1,9 +1,9 @@
 package excel
 
-var defaultOption = excelOption{}
+var defaultOption = ExcelOption{}
 
 type Option interface {
-	apply(excelOption)
+	apply(*ExcelOption)
 }
 
 
@@ -12,7 +12,7 @@ type titleOpt struct {
 	titles []string
 }
 
-func (t titleOpt) apply(eo excelOption) {
+func (t titleOpt) apply(eo *ExcelOption) {
 	eo.titles = t.titles
 }
 
@@ -20,7 +20,7 @@ type fileNameOpt struct {
 	fileName string
 }
 
-func (t fileNameOpt) apply(eo excelOption) {
+func (t fileNameOpt) apply(eo *ExcelOption) {
 	eo.fileName = t.fileName
 }
 
@@ -28,7 +28,7 @@ type sheetNameOpt struct {
 	sheetName string
 }
 
-func (t sheetNameOpt) apply(eo excelOption) {
+func (t sheetNameOpt) apply(eo *ExcelOption) {
 	eo.sheetName = t.sheetName
 }
 
