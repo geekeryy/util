@@ -4,9 +4,10 @@
 package jwt_test
 
 import (
-	"github.com/comeonjy/util/jwt"
 	"log"
 	"testing"
+
+	"github.com/comeonjy/util/jwt"
 )
 
 func TestCreateToken(t *testing.T) {

@@ -30,7 +30,7 @@ func TestSave(t *testing.T) {
 	demos := make([]DemoModel, 0)
 	demos = append(demos, *demo, *demo)
 	t.Run("create", func(t *testing.T) {
-		if err := excel.New(excel.FileNameOption("./1.xlsx"), excel.SheetNameOption("Sheet1")).Create(demos); err != nil {
+		if err := excel.New(excel.FileNameOption("./1.xlsx"),excel.SheetNameOption( "Sheet1")).Create(demos); err != nil {
 			t.Error(err)
 		}
 	})

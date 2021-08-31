@@ -1,4 +1,5 @@
 .idea
+.DS_Store
 config.yaml
 main
 excel/*.xlsx
