@@ -1,5 +1,5 @@
 // @Description  TODO
-// @Author  	 jiangyang  
+// @Author  	 jiangyang
 // @Created  	 2021/2/5 2:39 下午
 package tencent_cos_test
 
@@ -17,7 +17,7 @@ func init() {
 	c = tencent_cos.NewClient(config.GetConfig().TencentCos)
 }
 
-func TestDemo(t *testing.T)  {
+func TestDemo(t *testing.T) {
 	fmt.Println("123"[2:])
 }
 

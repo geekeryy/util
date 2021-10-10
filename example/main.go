@@ -5,12 +5,15 @@ package main
 
 import (
 	"encoding/json"
+	"net/http"
+	_ "net/http/pprof"
+	"time"
+
 	"github.com/comeonjy/util/elastic"
 	"github.com/comeonjy/util/email"
 	"github.com/comeonjy/util/log"
-	"net/http"
-	"time"
 
+	"github.com/comeonjy/util/mysql"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 
@@ -19,7 +22,6 @@ import (
 	"github.com/comeonjy/util/errno"
 	"github.com/comeonjy/util/jwt"
 	"github.com/comeonjy/util/middlewares"
-	"github.com/comeonjy/util/mysql"
 	"github.com/comeonjy/util/rbac"
 	"github.com/comeonjy/util/server"
 )

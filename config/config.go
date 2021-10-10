@@ -1,5 +1,5 @@
 // @Description  加载配置
-// @Author  	 jiangyang  
+// @Author  	 jiangyang
 // @Created  	 2020/10/30 5:30 下午
 package config
 

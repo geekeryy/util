@@ -19,5 +19,6 @@ func foo() (a int) {
 }
 
 func TestDemo(t *testing.T)  {
-	fmt.Println(foo())
+	fmt.Println(1<<0,1<<1,1<<2)
+
 }
