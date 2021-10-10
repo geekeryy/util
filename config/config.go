@@ -5,6 +5,7 @@ package config
 
 import (
 	"github.com/comeonjy/util/elastic"
+	"github.com/comeonjy/util/etcd"
 	"github.com/comeonjy/util/rabbitmq"
 	"github.com/comeonjy/util/tencent/tencent_cos"
 	"github.com/sirupsen/logrus"
@@ -33,6 +34,7 @@ type Config struct {
 	Rabbitmq   rabbitmq.Config    `mapstructure:"rabbitmq"`
 	Elastic    elastic.Config     `mapstructure:"elastic"`
 	TencentCos tencent_cos.Config `mapstructure:"cos"`
+	Etcd       etcd.Config        `mapstructure:"etcd"`
 }
 
 // 获取配置信息

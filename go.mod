@@ -4,7 +4,6 @@ go 1.15
 
 require (
 	github.com/360EntSecGroup-Skylar/excelize/v2 v2.0.0
-	github.com/PuerkitoBio/goquery v1.6.1 // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/eclipse/paho.mqtt.golang v1.2.0
 	github.com/elastic/go-elasticsearch/v8 v8.0.0-20201104130540-2e1f801663c6
@@ -20,6 +19,7 @@ require (
 	github.com/spf13/viper v1.7.1
 	github.com/streadway/amqp v1.0.0
 	github.com/tencentyun/cos-go-sdk-v5 v0.7.19
+	go.etcd.io/etcd/client/v3 v3.5.0-alpha.0
 	go.mongodb.org/mongo-driver v1.4.2
 	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
 	gopkg.in/gomail.v2 v2.0.0-20160411212932-81ebce5c23df

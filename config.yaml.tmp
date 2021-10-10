@@ -74,3 +74,8 @@ cos:
   secret_id:
   secret_key:
   cdn:
+
+etcd:
+  endpoints:
+    - localhost:2379
+  dial_time_out: 60
